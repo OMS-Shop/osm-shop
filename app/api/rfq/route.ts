@@ -3,59 +3,49 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-export const runtime = "nodejs";
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// --- Email config ---------------------------------------------------------
-
-const resendApiKey = process.env.RESEND_API_KEY;
-
-// Where RFQs should be sent TO.
-// If RFQ_TO_EMAIL isn't set, we default to Carl's address.
-const RFQ_TO_EMAIL =
-  process.env.RFQ_TO_EMAIL || "Carl.Dale@GBInnovation.onmicrosoft.com";
-
-// The FROM address. If you haven't set up a custom domain in Resend yet,
-// it's safest to use their default onboarding address.
-const RFQ_FROM_EMAIL =
-  process.env.RFQ_FROM_EMAIL || "OSMS RFQ <onboarding@resend.dev>";
-
-if (!resendApiKey) {
-  console.error("❌ Missing RESEND_API_KEY – RFQ emails cannot be sent.");
-}
-
-const resend = resendApiKey ? new Resend(resendApiKey) : null;
-
-// -------------------------------------------------------------------------
-
-function getField(form: FormData, name: string): string {
-  const value = form.get(name);
-  if (value == null) return "";
-  return value.toString().trim();
-}
+const PORTAL_INBOX = "Carl.Dale@GBInnovation.onmicrosoft.com";
 
 export async function POST(req: NextRequest) {
   try {
-    if (!resend || !resendApiKey) {
-      return NextResponse.json(
-        { error: "Email service is not configured (RESEND_API_KEY missing)." },
-        { status: 500 }
-      );
-    }
+    const body = await req.json();
 
-    const form = await req.formData();
+    // Be tolerant of different field names coming from the form
+    const contactEmail: string | undefined =
+      body.contactEmail ||
+      body.email ||
+      body.contact_email ||
+      body.contact ||
+      undefined;
 
-    const projectName = getField(form, "projectName");
-    const company = getField(form, "company");
-    const contactEmail = getField(form, "contactEmail");
-    const country = getField(form, "country");
-    const description = getField(form, "description");
-    const quantity = getField(form, "quantity");
-    const material = getField(form, "material");
-    const stage = getField(form, "stage");
-    const notes = getField(form, "notes");
+    const description: string | undefined =
+      body.description ||
+      body.briefDescription ||
+      body.applicationDescription ||
+      body.projectDescription ||
+      undefined;
 
-    // Basic validation – we at least want an email and some description
-    if (!contactEmail || !description) {
+    const projectName: string | undefined =
+      body.projectName || body.project || body.title || undefined;
+
+    const company: string | undefined =
+      body.company || body.organisation || body.organization || undefined;
+
+    const country: string | undefined = body.country || undefined;
+    const quantity: string | number | undefined = body.quantity;
+    const material: string | undefined = body.primaryMaterial || body.material;
+    const stage: string | undefined = body.stage || body.projectStage;
+    const notes: string | undefined =
+      body.technicalNotes || body.notes || body.comments;
+
+    // Basic validation – must have contact email + description
+    if (
+      !contactEmail ||
+      typeof contactEmail !== "string" ||
+      !description ||
+      typeof description !== "string"
+    ) {
       return NextResponse.json(
         {
           error: "Please provide a contact email and brief description.",
@@ -64,81 +54,44 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const subject = projectName
-      ? `New RFQ – ${projectName}`
-      : "New RFQ from One Stop Microfluidics Shop";
+    // Build a plain-text summary for the inbox
+    const lines: string[] = [];
 
-    const html = `
-      <h2>New RFQ from One Stop Microfluidics Shop</h2>
+    lines.push("New RFQ submitted via OSMS portal");
+    lines.push("---------------------------------");
+    lines.push(`Contact email: ${contactEmail}`);
+    if (projectName) lines.push(`Project name: ${projectName}`);
+    if (company) lines.push(`Company: ${company}`);
+    if (country) lines.push(`Country: ${country}`);
+    if (quantity !== undefined) lines.push(`Quantity: ${quantity}`);
+    if (material) lines.push(`Material: ${material}`);
+    if (stage) lines.push(`Stage: ${stage}`);
+    lines.push("");
+    lines.push("Description / brief:");
+    lines.push(description);
+    lines.push("");
+    if (notes) {
+      lines.push("Technical notes:");
+      lines.push(notes);
+    }
 
-      <p><strong>Project name:</strong> ${projectName || "(not provided)"}</p>
-      <p><strong>Company:</strong> ${company || "(not provided)"}</p>
-      <p><strong>Contact email:</strong> ${contactEmail}</p>
-      <p><strong>Country:</strong> ${country || "(not provided)"}</p>
-
-      <p><strong>Quantity:</strong> ${quantity || "(not provided)"}</p>
-      <p><strong>Primary material:</strong> ${material || "(not provided)"}</p>
-      <p><strong>Stage:</strong> ${stage || "(not provided)"}</p>
-
-      <p><strong>Application / brief description:</strong></p>
-      <p>${description.replace(/\n/g, "<br />")}</p>
-
-      <p><strong>Technical notes for the team:</strong></p>
-      <p>${notes ? notes.replace(/\n/g, "<br />") : "(none provided)"}</p>
-
-      <hr />
-      <p>
-        Attachment info is stored in the OSMS portal.
-        Log in to view and download the design files associated with this RFQ.
-      </p>
-    `;
-
-    const text = `
-New RFQ from One Stop Microfluidics Shop
-
-Project name: ${projectName || "(not provided)"}
-Company: ${company || "(not provided)"}
-Contact email: ${contactEmail}
-Country: ${country || "(not provided)"}
-
-Quantity: ${quantity || "(not provided)"}
-Primary material: ${material || "(not provided)"}
-Stage: ${stage || "(not provided)"}
-
-Application / brief description:
-${description}
-
-Technical notes for the team:
-${notes || "(none provided)"}
-
-----------------------------------------------------------------
-Attachment info is stored in the OSMS portal.
-Log in to view and download the design files for this RFQ.
-    `.trim();
+    const text = lines.join("\n");
 
     // Send email via Resend
-    const response = await resend.emails.send({
-      from: RFQ_FROM_EMAIL,
-      to: [RFQ_TO_EMAIL],
-      subject,
-      html,
+    await resend.emails.send({
+      from: "OSMS RFQ <no-reply@onestopmicrofluidics.com>",
+      to: [PORTAL_INBOX],
+      subject: projectName
+        ? `OSMS RFQ – ${projectName}`
+        : "OSMS RFQ – New request",
       text,
-    } as any); // `as any` keeps TS happy with different Resend versions
-
-    console.log("✅ RFQ email sent:", response);
+    });
 
     return NextResponse.json({ success: true });
-  } catch (error: unknown) {
-    console.error("❌ RFQ email error:", error);
-
-    const details =
-      error instanceof Error ? error.message : JSON.stringify(error);
-
+  } catch (error) {
+    console.error("RFQ API error", error);
     return NextResponse.json(
-      {
-        error: "Failed to submit RFQ",
-        details,
-      },
+      { error: "Failed to submit RFQ" },
       { status: 500 }
     );
   }
