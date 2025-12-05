@@ -1,119 +1,82 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { Client } from "@notionhq/client";
 
-const NOTIFICATION_EMAIL = "Carl.Dale@GBInnovation.onmicrosoft.com";
+const notion = new Client({
+  auth: process.env.NOTION_SECRET,
+});
 
-// Use the same RESEND_API_KEY as before
-const resend = new Resend(process.env.RESEND_API_KEY || "");
+const NDA_DATABASE_ID = process.env.NOTION_NDA_DATABASE_ID;
 
-// Simple in-memory store for NDA acceptances (for now)
-type NdaRecord = {
-  id: string;
-  createdAt: string;
-  name: string;
-  email: string;
-  company: string;
-  version: string;
-  ip: string | null;
-};
-
-const ndas: NdaRecord[] = [];
-
-/**
- * GET /api/nda
- * Returns the list of NDAs (later we can show this on /admin)
- */
-export async function GET() {
-  return NextResponse.json({ ndas: [...ndas].reverse() });
-}
-
-/**
- * POST /api/nda
- * Records an NDA acceptance and emails you.
- * Expects JSON:
- * { name: string, email: string, company?: string, version?: string }
- */
+// POST /api/nda
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const name = (body.name || "").trim();
-    const email = (body.email || "").trim();
-    const company = (body.company || "").trim();
-    const version = (body.version || "v1").trim();
 
-    if (!name || !email) {
+    const {
+      name,
+      email,
+      company,
+      hasSignedNda,
+    }: {
+      name: string;
+      email: string;
+      company: string;
+      hasSignedNda?: boolean;
+    } = body;
+
+    // Safely derive an IP address without using req.ip (which NextRequest doesn't have)
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("x-real-ip") ||
+      null;
+
+    if (!name || !email || !company) {
       return NextResponse.json(
-        { success: false, error: "Name and email are required." },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const ip =
-      req.ip ||
-      req.headers.get("x-forwarded-for") ||
-      req.headers.get("x-real-ip") ||
-      null;
-
-    const nda: NdaRecord = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      createdAt: new Date().toISOString(),
-      name,
-      email,
-      company,
-      version,
-      ip,
-    };
-
-    ndas.push(nda);
-
-    // Build NDA notification email
-    const subject = `NDA accepted: ${name}`;
-    const textBody = `
-A new NDA has been accepted via the One Stop Microfluidics Shop portal.
-
-Name:    ${name}
-Email:   ${email}
-Company: ${company || "-"}
-
-Version: ${version}
-IP:      ${ip || "-"}
-
-Accepted at: ${nda.createdAt}
-
-(Stored in memory for now – later we will persist this in a database / Notion.)
-`.trim();
-
-    // Try to send the email, but don't fail the API if email fails
-    try {
-      const result = await (resend as any).emails.send({
-        from: "OSM Portal <nda@one-stop-microfluidics-shop.com>",
-        to: NOTIFICATION_EMAIL,
-        reply_to: email || undefined,
-        subject,
-        text: textBody,
+    // If Notion is configured, record the NDA confirmation
+    if (NDA_DATABASE_ID) {
+      await notion.pages.create({
+        parent: { database_id: NDA_DATABASE_ID },
+        properties: {
+          Name: {
+            title: [{ text: { content: name } }],
+          },
+          Email: {
+            email,
+          },
+          Company: {
+            rich_text: [{ text: { content: company } }],
+          },
+          Status: {
+            select: { name: hasSignedNda ? "Signed" : "Confirmed" },
+          },
+          Source: {
+            rich_text: [{ text: { content: "OSM Portal" } }],
+          },
+          ...(ip
+            ? {
+                IP: {
+                  rich_text: [{ text: { content: ip } }],
+                },
+              }
+            : {}),
+        },
       });
-
-      console.log(
-        "=== NDA email send OK ===",
-        result?.id ? `id=${result.id}` : "(no id on result)"
+    } else {
+      console.warn(
+        "[NDA API] NOTION_NDA_DATABASE_ID not set – skipping Notion logging."
       );
-    } catch (err) {
-      console.error("=== Error sending NDA email via Resend ===", err);
     }
 
-    console.log("NDA accepted:", {
-      name,
-      email,
-      company,
-      version,
-      ip,
-    });
-
-    return NextResponse.json({ success: true, id: nda.id });
+    return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Error handling NDA POST:", error);
+    console.error("[NDA API] Error recording NDA", error);
     return NextResponse.json(
-      { success: false, error: "Failed to record NDA." },
+      { error: "Failed to record NDA" },
       { status: 500 }
     );
   }
