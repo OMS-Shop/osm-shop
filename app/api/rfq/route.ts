@@ -5,13 +5,14 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Inbox where RFQs arrive
 const PORTAL_INBOX = "Carl.Dale@GBInnovation.onmicrosoft.com";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Be tolerant of different field names coming from the form
+    // Be tolerant of different field names from the form
     const contactEmail: string | undefined =
       body.contactEmail ||
       body.email ||
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
     const notes: string | undefined =
       body.technicalNotes || body.notes || body.comments;
 
-    // Basic validation – must have contact email + description
+    // Minimal validation
     if (
       !contactEmail ||
       typeof contactEmail !== "string" ||
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Build a plain-text summary for the inbox
+    // Build a simple text email
     const lines: string[] = [];
 
     lines.push("New RFQ submitted via OSMS portal");
@@ -73,23 +74,39 @@ export async function POST(req: NextRequest) {
     if (notes) {
       lines.push("Technical notes:");
       lines.push(notes);
+      lines.push("");
     }
 
     const text = lines.join("\n");
 
-    // Send email via Resend
-    await resend.emails.send({
-      from: "OSMS RFQ <no-reply@onestopmicrofluidics.com>",
+    // IMPORTANT: use Resend's default verified sender domain
+    // to avoid domain-verification errors.
+    const { data, error } = await resend.emails.send({
+      from: "OSMS Portal <onboarding@resend.dev>",
       to: [PORTAL_INBOX],
       subject: projectName
         ? `OSMS RFQ – ${projectName}`
         : "OSMS RFQ – New request",
+      reply_to: contactEmail, // this is allowed in current Resend API
       text,
     });
 
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("RFQ API error", error);
+    if (error) {
+      console.error("Resend error while sending RFQ email", error);
+      return NextResponse.json(
+        {
+          error: "Email provider error when sending RFQ.",
+        },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      id: data?.id ?? null,
+    });
+  } catch (err) {
+    console.error("RFQ API unexpected error", err);
     return NextResponse.json(
       { error: "Failed to submit RFQ" },
       { status: 500 }
