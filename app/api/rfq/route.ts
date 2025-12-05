@@ -1,11 +1,20 @@
 // app/api/rfq/route.ts
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-export const runtime = "nodejs";
+// Email configuration
+// You can override these in Vercel > Settings > Environment Variables
+// RFQ_FROM_EMAIL and RFQ_TO_EMAIL if you want.
+const FROM_EMAIL =
+  process.env.RFQ_FROM_EMAIL || "Carl.Dale@GBInnovation.onmicrosoft.com";
+const TO_EMAIL =
+  process.env.RFQ_TO_EMAIL || "Carl.Dale@GBInnovation.onmicrosoft.com";
 
-// Small helper to keep us safe in HTML
+// Create Resend client
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Small helper so we don't put raw HTML-unescaped strings in the email
 function escapeHtml(value: string): string {
   return value
     .replace(/&/g, "&amp;")
@@ -15,126 +24,87 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#039;");
 }
 
-export async function POST(req: Request) {
+// Format all text fields from the form into a simple HTML block
+function buildEmailHtml(fields: Record<string, string>): string {
+  const rows = Object.entries(fields)
+    .filter(([, v]) => v && v.trim() !== "")
+    .map(
+      ([key, value]) =>
+        `<p><strong>${escapeHtml(key)}:</strong> ${escapeHtml(value)}</p>`
+    )
+    .join("\n");
+
+  return `
+    <div>
+      <h2>New RFQ submitted via OSMS portal</h2>
+      ${rows || "<p>(No form fields were captured)</p>"}
+    </div>
+  `;
+}
+
+export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-
-    const projectName = String(formData.get("projectName") ?? "");
-    const company = String(formData.get("company") ?? "");
-    const email = String(formData.get("email") ?? "");
-    const country = String(formData.get("country") ?? "");
-    const quantity = String(formData.get("quantity") ?? "");
-    const primaryMaterial = String(formData.get("primaryMaterial") ?? "");
-    const stage = String(formData.get("stage") ?? "");
-    const notes = String(formData.get("notes") ?? "");
-
-    // Collect any uploaded files (we only look for File entries)
-    const files: File[] = [];
-    for (const value of formData.values()) {
-      if (value instanceof File && value.size > 0) {
-        files.push(value);
-      }
-    }
-
-    // Email config – tries RFQ-specific vars first, then falls back
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const toEmail =
-      process.env.RFQ_INBOX_EMAIL ||
-      process.env.NDA_INBOX_EMAIL || // fallback if you use same inbox
-      "";
-    const fromEmail =
-      process.env.RFQ_FROM_EMAIL ||
-      process.env.NDA_FROM_EMAIL ||
-      process.env.RESEND_FROM_EMAIL ||
-      "";
-
-    if (!resendApiKey || !toEmail || !fromEmail) {
-      console.error("RFQ email configuration missing", {
-        hasResendKey: !!resendApiKey,
-        toEmail,
-        fromEmail,
-      });
-
+    if (!process.env.RESEND_API_KEY) {
+      console.error("RFQ API: Missing RESEND_API_KEY");
       return NextResponse.json(
-        {
-          error: "Server email configuration is missing.",
-          details:
-            "Missing RESEND_API_KEY or RFQ_INBOX_EMAIL / RFQ_FROM_EMAIL (or NDA_* fallbacks).",
-        },
+        { error: "Email service is not configured" },
         { status: 500 }
       );
     }
 
-    const resend = new Resend(resendApiKey);
+    const formData = await req.formData();
 
-    // Build basic HTML email body
-    const html = `
-      <h1>New RFQ from OSMS portal</h1>
-      <p><strong>Project:</strong> ${escapeHtml(projectName || "(not provided)")}</p>
-      <p><strong>Company:</strong> ${escapeHtml(company || "(not provided)")}</p>
-      <p><strong>Email:</strong> ${escapeHtml(email || "(not provided)")}</p>
-      <p><strong>Country:</strong> ${escapeHtml(country || "(not provided)")}</p>
-      <p><strong>Quantity:</strong> ${escapeHtml(quantity || "(not provided)")}</p>
-      <p><strong>Primary material:</strong> ${escapeHtml(
-        primaryMaterial || "(not provided)"
-      )}</p>
-      <p><strong>Stage:</strong> ${escapeHtml(stage || "(not provided)")}</p>
-      <p><strong>Notes / technical details:</strong></p>
-      <pre style="white-space:pre-wrap;font-family:system-ui, -apple-system, sans-serif;">
-${escapeHtml(notes || "")}
-      </pre>
-      <p><strong>Number of attached files:</strong> ${files.length}</p>
-    `;
+    // Collect all string fields from the multipart form
+    const fields: Record<string, string> = {};
+    for (const [key, value] of formData.entries()) {
+      if (typeof value === "string") {
+        fields[key] = value;
+      }
+    }
 
-    // Convert attachments for Resend (if there are any)
-    const attachments =
-      files.length > 0
-        ? await Promise.all(
-            files.map(async (file) => {
-              const arrayBuffer = await file.arrayBuffer();
-              // Buffer is available in Node.js runtime
-              const buffer = Buffer.from(arrayBuffer);
-              return {
-                filename: file.name,
-                content: buffer.toString("base64"),
-              };
-            })
-          )
-        : undefined;
+    // Try to infer a project / subject line and contact email
+    const projectName =
+      fields["projectName"] ||
+      fields["project_name"] ||
+      fields["Project name"] ||
+      "Microfluidics RFQ";
 
-    // Send email
-    const subject = projectName
-      ? `RFQ – ${projectName}`
-      : "New RFQ from OSMS portal";
+    const contactEmail =
+      fields["email"] ||
+      fields["contactEmail"] ||
+      fields["contact_email"] ||
+      fields["Contact email"];
 
-    const result = await resend.emails.send({
-      from: fromEmail,
-      to: [toEmail],
-      subject,
-      html,
-      reply_to: email || undefined,
-      attachments,
+    const subject = `RFQ – ${projectName}`.slice(0, 200);
+    const html = buildEmailHtml({
+      ...fields,
+      ...(contactEmail ? { "Contact email (parsed)": contactEmail } : {}),
     });
 
-    if ((result as any)?.error) {
-      console.error("Resend RFQ email error", (result as any).error);
+    // Send email via Resend
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: [TO_EMAIL],
+      subject,
+      html,
+      // NOTE: we deliberately do NOT include `reply_to` here to avoid
+      // the TypeScript error you saw. If we decide later to add it,
+      // we’ll match whatever shape the current Resend SDK expects.
+    });
+
+    if ((result as any).error) {
+      console.error("RFQ API: Resend error", (result as any).error);
       return NextResponse.json(
-        {
-          error: "Failed to send RFQ email",
-          details: (result as any).error?.message ?? "Unknown Resend error",
-        },
+        { error: "Failed to submit RFQ" },
         { status: 500 }
       );
     }
 
     return NextResponse.json({ ok: true });
-  } catch (error: any) {
-    console.error("RFQ submission failed", error);
+  } catch (err) {
+    console.error("RFQ API: unexpected error", err);
     return NextResponse.json(
-      {
-        error: "Failed to submit RFQ",
-        details: error?.message ?? String(error),
-      },
+      { error: "Failed to submit RFQ" },
       { status: 500 }
     );
   }
