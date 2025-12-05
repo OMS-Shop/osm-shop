@@ -3,220 +3,447 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-type RFQRecord = {
-  id: string;
-  submittedAt: string;
-  data: Record<string, any>;
+type RfqEntry = {
+  id?: string;
+  createdAt?: string;
+  projectName: string;
+  company: string;
+  email: string;
+  quantity: number | null;
+  material: string;
+  stage: string;
+  status?: string;
+
+  vendorUnitPrice?: number | null;
+  customerUnitPrice?: number | null;
+  currency?: string;
 };
 
+type NdaEntry = {
+  createdAt?: string;
+  name: string;
+  email: string;
+  company: string;
+  version?: string;
+  ip?: string;
+};
+
+function formatMoney(amount?: number | null, currency?: string | null): string {
+  if (typeof amount !== "number" || Number.isNaN(amount)) return "—";
+  const cur = currency || "GBP";
+  const symbol = cur === "GBP" ? "£" : cur === "USD" ? "$" : cur + " ";
+  return `${symbol}${amount.toFixed(2)}`;
+}
+
 export default function AdminPage() {
-  const [rfqs, setRfqs] = useState<RFQRecord[]>([]);
+  const [rfqs, setRfqs] = useState<RfqEntry[]>([]);
+  const [ndas, setNdas] = useState<NdaEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [checkedAuth, setCheckedAuth] = useState(false);
+  const [isAuthorised, setIsAuthorised] = useState(false);
+  const [selectedRfq, setSelectedRfq] = useState<RfqEntry | null>(null);
 
+  // Simple client-side "auth" check
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const flag = localStorage.getItem("osmStaffLoggedIn");
+      setIsAuthorised(flag === "true");
+      setCheckedAuth(true);
+    }
+  }, []);
+
+  // Load RFQs + NDAs once authorised
   useEffect(() => {
     async function load() {
+      if (!isAuthorised) return;
+
       try {
-        const res = await fetch("/api/rfq", { cache: "no-store" });
-        if (!res.ok) throw new Error("Failed to load RFQs");
-        const json = await res.json();
-        setRfqs(json.rfqs ?? []);
-      } catch (err: any) {
+        setLoading(true);
+        setError(null);
+
+        const [rfqRes, ndaRes] = await Promise.all([
+          fetch("/api/rfq"),
+          fetch("/api/nda"),
+        ]);
+
+        if (!rfqRes.ok || !ndaRes.ok) {
+          throw new Error("Failed to fetch admin data");
+        }
+
+        const rfqJson = await rfqRes.json();
+        const ndaJson = await ndaRes.json();
+
+        setRfqs(rfqJson.rfqs ?? []);
+        setNdas(ndaJson.ndas ?? []);
+      } catch (err) {
         console.error(err);
-        setError(err.message || "Error loading RFQs");
+        setError("Could not load admin data. Please refresh the page.");
       } finally {
         setLoading(false);
       }
     }
+
     load();
-  }, []);
+  }, [isAuthorised]);
 
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      {/* HEADER */}
-      <header className="border-b border-slate-200 bg-sky-950 text-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-sky-300/40 bg-white/5 text-[0.6rem] font-semibold tracking-[0.18em]">
-              OSM
-            </div>
-            <div className="flex flex-col">
-              <span className="text-base md:text-lg font-semibold tracking-wide">
-                One Stop Microfludics Shop
-              </span>
-              <span className="text-xs md:text-sm text-sky-200">
-                Internal RFQ dashboard
-              </span>
-            </div>
-          </Link>
-
-          <nav className="hidden items-center gap-5 text-xs md:flex">
-            <Link href="/" className="hover:text-sky-200">
-              Home
-            </Link>
-            <Link href="/upload" className="hover:text-sky-200">
-              Upload
-            </Link>
-          </nav>
+  // While we haven't checked localStorage yet
+  if (!checkedAuth) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="max-w-2xl mx-auto px-4 py-10">
+          <p className="text-sm text-slate-300">Checking staff access…</p>
         </div>
-      </header>
+      </main>
+    );
+  }
 
-      {/* MAIN */}
-      <main className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="text-xl font-semibold md:text-2xl">
-          RFQ submissions
-        </h1>
-        <p className="mt-2 text-sm text-slate-600">
-          RFQs received since the server last started. This reads from
-          <code className="ml-1 rounded bg-slate-100 px-1.5 py-[1px] text-[0.7rem]">
-            /api/rfq
-          </code>{" "}
-          which is currently using in-memory storage.
-        </p>
+  // If not authorised, show a friendly login prompt
+  if (!isAuthorised) {
+    return (
+      <main className="min-h-screen bg-slate-950 text-slate-50">
+        <div className="max-w-2xl mx-auto px-4 py-10 space-y-4">
+          <h1 className="text-2xl font-semibold">Staff area</h1>
+          <p className="text-sm text-slate-300">
+            This page is for internal use only. Please sign in with your staff
+            credentials to view RFQs and NDA acceptances.
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium bg-sky-500 hover:bg-sky-400 text-slate-950 transition"
+          >
+            Go to staff login
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // Quote helpers
+  const quoteTotal =
+    selectedRfq &&
+    selectedRfq.quantity != null &&
+    selectedRfq.customerUnitPrice != null
+      ? selectedRfq.quantity * selectedRfq.customerUnitPrice
+      : null;
+
+  const quoteCurrency = selectedRfq?.currency ?? "GBP";
+
+  const quoteDescription =
+    selectedRfq && selectedRfq.id
+      ? `${selectedRfq.material || "Microfluidic"} parts – ${
+          selectedRfq.stage || "prototype"
+        } run (${selectedRfq.id})`
+      : "";
+
+  // Authorised view
+  return (
+    <main className="min-h-screen bg-slate-950 text-slate-50">
+      <div className="max-w-6xl mx-auto px-4 py-10 space-y-8">
+        <header className="space-y-1">
+          <h1 className="text-3xl font-semibold">
+            One Stop Microfluidics Shop – Admin
+          </h1>
+          <p className="text-slate-300 text-sm">
+            Internal view of recent RFQs, NDAs and quote preparation details.
+          </p>
+        </header>
 
         {loading && (
-          <p className="mt-6 text-sm text-slate-600">Loading RFQs…</p>
+          <p className="text-slate-300 text-sm">Loading admin data…</p>
         )}
 
         {error && (
-          <p className="mt-6 text-sm text-red-600">Error: {error}</p>
-        )}
-
-        {!loading && !error && rfqs.length === 0 && (
-          <p className="mt-6 text-sm text-slate-500">
-            No RFQs yet. Submit one via the{" "}
-            <Link href="/upload" className="text-sky-700 underline">
-              upload form
-            </Link>
-            .
+          <p className="text-sm text-rose-400 bg-rose-900/30 border border-rose-700 rounded-md px-3 py-2">
+            {error}
           </p>
         )}
 
-        {!loading && !error && rfqs.length > 0 && (
-          <div className="mt-6 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-md">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <tr>
-                  <th className="px-4 py-3">ID</th>
-                  <th className="px-4 py-3">Submitted</th>
-                  <th className="px-4 py-3">Project</th>
-                  <th className="px-4 py-3">Company</th>
-                  <th className="px-4 py-3">Contact</th>
-                  <th className="px-4 py-3">Quantity</th>
-                  <th className="px-4 py-3">Stage</th>
-                  <th className="px-4 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rfqs
-                  .slice()
-                  .reverse()
-                  .map((rfq) => {
-                    const d = rfq.data || {};
-                    const isOpen = expandedId === rfq.id;
-                    const submitted = new Date(
-                      rfq.submittedAt
-                    ).toLocaleString();
-                    return (
+        {/* RFQs */}
+        <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-xl font-semibold">Recent RFQs</h2>
+            <span className="text-xs text-slate-400">
+              {rfqs.length} RFQ{rfqs.length === 1 ? "" : "s"}
+            </span>
+          </div>
+
+          {rfqs.length === 0 ? (
+            <p className="text-sm text-slate-400">
+              No RFQs submitted yet in this session.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm border-collapse">
+                <thead className="bg-slate-900/80">
+                  <tr>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      When
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Project
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Company
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Email
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Qty
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Material
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Vendor £/part
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Customer £/part (+45%)
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Stage
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Quote
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rfqs
+                    .slice()
+                    .reverse()
+                    .map((rfq, idx) => {
+                      const isSelected =
+                        selectedRfq && selectedRfq.id === rfq.id;
+                      return (
+                        <tr
+                          key={idx}
+                          className={`odd:bg-slate-900/40 even:bg-slate-900/10 ${
+                            isSelected ? "outline outline-1 outline-sky-500" : ""
+                          }`}
+                        >
+                          <td className="px-3 py-2 border-b border-slate-900/60 text-slate-400">
+                            {rfq.createdAt
+                              ? new Date(rfq.createdAt).toLocaleString()
+                              : "—"}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {rfq.projectName}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {rfq.company}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {rfq.email}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {rfq.quantity ?? "—"}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {rfq.material}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {formatMoney(
+                              rfq.vendorUnitPrice ?? null,
+                              rfq.currency ?? "GBP"
+                            )}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {formatMoney(
+                              rfq.customerUnitPrice ?? null,
+                              rfq.currency ?? "GBP"
+                            )}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            {rfq.stage || "—"}
+                          </td>
+                          <td className="px-3 py-2 border-b border-slate-900/60">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSelectedRfq(
+                                  isSelected ? null : (rfq as RfqEntry)
+                                )
+                              }
+                              className="inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium bg-sky-500 hover:bg-sky-400 text-slate-950 transition"
+                            >
+                              {isSelected ? "Clear" : "Prepare quote"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Quote details panel */}
+          {selectedRfq && (
+            <div className="mt-6 rounded-lg border border-sky-700 bg-sky-900/20 p-4 space-y-3">
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-lg font-semibold">
+                  Quote details for {selectedRfq.id ?? "RFQ"}
+                </h3>
+                <span className="text-xs text-sky-200/80">
+                  Copy these values into Xero as a draft quote.
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-slate-400 text-xs uppercase tracking-wide">
+                      Customer (contact name)
+                    </div>
+                    <div className="font-medium">
+                      {selectedRfq.company || "—"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400 text-xs uppercase tracking-wide">
+                      Customer email
+                    </div>
+                    <div className="font-medium">
+                      {selectedRfq.email || "—"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-slate-400 text-xs uppercase tracking-wide">
+                      RFQ ID
+                    </div>
+                    <div className="font-mono text-xs">
+                      {selectedRfq.id ?? "—"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-slate-400 text-xs uppercase tracking-wide">
+                      Line description (for Xero)
+                    </div>
+                    <div className="font-medium">
+                      {quoteDescription || "—"}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mt-2">
+                    <div>
+                      <div className="text-slate-400 text-xs uppercase tracking-wide">
+                        Quantity
+                      </div>
+                      <div className="font-medium">
+                        {selectedRfq.quantity ?? "—"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-400 text-xs uppercase tracking-wide">
+                        Unit price (customer)
+                      </div>
+                      <div className="font-medium">
+                        {formatMoney(
+                          selectedRfq.customerUnitPrice ?? null,
+                          quoteCurrency
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-slate-400 text-xs uppercase tracking-wide">
+                        Line total
+                      </div>
+                      <div className="font-semibold">
+                        {quoteTotal != null
+                          ? formatMoney(quoteTotal, quoteCurrency)
+                          : "—"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-slate-400">
+                    Xero will handle VAT/tax on top of this line total, based on
+                    your chosen tax rate.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* NDAs */}
+        <section className="rounded-xl border border-slate-800 bg-slate-900/60 p-6 space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-xl font-semibold">NDA Acceptances</h2>
+            <span className="text-xs text-slate-400">
+              {ndas.length} NDA{ndas.length === 1 ? "" : "s"}
+            </span>
+          </div>
+
+          {ndas.length === 0 ? (
+            <p className="text-sm text-slate-400">
+              No NDA acceptances recorded yet.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm border-collapse">
+                <thead className="bg-slate-900/80">
+                  <tr>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      When
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Name
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Company
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Email
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      Version
+                    </th>
+                    <th className="text-left px-3 py-2 border-b border-slate-800">
+                      IP
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ndas
+                    .slice()
+                    .reverse()
+                    .map((nda, idx) => (
                       <tr
-                        key={rfq.id}
-                        className="border-t border-slate-100 align-top hover:bg-slate-50 transition-colors"
+                        key={idx}
+                        className="odd:bg-slate-900/40 even:bg-slate-900/10"
                       >
-                        <td className="px-4 py-3 text-xs text-slate-500">
-                          {rfq.id}
+                        <td className="px-3 py-2 border-b border-slate-900/60 text-slate-400">
+                          {nda.createdAt
+                            ? new Date(nda.createdAt).toLocaleString()
+                            : "—"}
                         </td>
-                        <td className="px-4 py-3 text-xs">{submitted}</td>
-                        <td className="px-4 py-3">
-                          {String(d.project_name || "—")}
+                        <td className="px-3 py-2 border-b border-slate-900/60">
+                          {nda.name}
                         </td>
-                        <td className="px-4 py-3">
-                          {String(d.company || "—")}
+                        <td className="px-3 py-2 border-b border-slate-900/60">
+                          {nda.company}
                         </td>
-                        <td className="px-4 py-3 text-xs">
-                          <div>{String(d.contact_name || "—")}</div>
-                          <div className="text-slate-500">
-                            {String(d.email || "")}
-                          </div>
+                        <td className="px-3 py-2 border-b border-slate-900/60">
+                          {nda.email}
                         </td>
-                        <td className="px-4 py-3 text-xs">
-                          {String(d.quantity || "—")}
+                        <td className="px-3 py-2 border-b border-slate-900/60">
+                          {nda.version ?? "—"}
                         </td>
-                        <td className="px-4 py-3 text-xs">
-                          {String(d.volume_band || "—")}
-                        </td>
-                        <td className="px-4 py-3 text-xs">
-                          <button
-                            onClick={() =>
-                              setExpandedId(isOpen ? null : rfq.id)
-                            }
-                            className="rounded-full border border-slate-300 px-3 py-1 text-[0.7rem] hover:border-sky-500 hover:bg-slate-50 transition"
-                          >
-                            {isOpen ? "Hide details" : "View details"}
-                          </button>
+                        <td className="px-3 py-2 border-b border-slate-900/60 text-slate-400">
+                          {nda.ip ?? "—"}
                         </td>
                       </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* Expanded details */}
-        {!loading && !error && expandedId && (
-          <ExpandedDetails rfq={rfqs.find((r) => r.id === expandedId)!} />
-        )}
-      </main>
-    </div>
-  );
-}
-
-function ExpandedDetails({ rfq }: { rfq: RFQRecord }) {
-  const d = rfq.data || {};
-  return (
-    <section className="mx-auto mt-6 max-w-6xl rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
-      <h2 className="text-sm font-semibold text-slate-900">
-        RFQ {rfq.id} – full details
-      </h2>
-      <div className="mt-2 grid gap-4 md:grid-cols-3">
-        <Detail label="Project name" value={d.project_name} />
-        <Detail label="Company" value={d.company} />
-        <Detail label="Application" value={d.application} />
-        <Detail label="Contact name" value={d.contact_name} />
-        <Detail label="Email" value={d.email} />
-        <Detail label="Phone" value={d.phone} />
-        <Detail label="Quantity" value={d.quantity} />
-        <Detail label="Stage" value={d.volume_band} />
-        <Detail label="Primary material" value={d.primary_material} />
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       </div>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <Detail label="Technical notes" value={d.technical_notes} />
-        <Detail label="Extra notes" value={d.extra_notes} />
-      </div>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <Detail label="Processes" value={d.processes} />
-        <Detail label="Material notes" value={d.material_notes} />
-      </div>
-      <p className="mt-4 text-[0.7rem] text-slate-500">
-        File uploads are not yet surfaced in this UI – they are available in
-        the server logs for now. Later we&apos;ll store them in proper object
-        storage.
-      </p>
-    </section>
-  );
-}
-
-function Detail({ label, value }: { label: string; value: unknown }) {
-  const text = value ? String(value) : "—";
-  return (
-    <div>
-      <div className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500">
-        {label}
-      </div>
-      <div className="mt-1 whitespace-pre-wrap text-sm text-slate-900">
-        {text}
-      </div>
-    </div>
+    </main>
   );
 }
