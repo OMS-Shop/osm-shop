@@ -77,30 +77,42 @@ export default function HomePage() {
               </Link>
             </div>
 
+            {/* ✅ Hero bullets with green ticks */}
             <div className="mt-6 grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
-              <div className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400/80" />
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5">
+                  <GreenTick />
+                </div>
                 <p>
                   <span className="font-semibold text-white">Single RFQ pack</span>{" "}
                   — files, material, volumes, target date.
                 </p>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400/80" />
+
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5">
+                  <GreenTick />
+                </div>
                 <p>
                   <span className="font-semibold text-white">DFM guidance</span>{" "}
                   to pick the right process early.
                 </p>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400/80" />
+
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5">
+                  <GreenTick />
+                </div>
                 <p>
                   <span className="font-semibold text-white">Bonding/sealing</span>{" "}
                   included for most CNC designs.
                 </p>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-sky-400/80" />
+
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5">
+                  <GreenTick />
+                </div>
                 <p>
                   <span className="font-semibold text-white">Email updates</span>{" "}
                   + portal status for live jobs.
