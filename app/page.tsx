@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic"; // ✅ IMPORTANT: lets ?enquiry=sent show the banner
+
 export default function HomePage({
   searchParams,
 }: {
@@ -57,7 +59,6 @@ export default function HomePage({
         {/* Right: hero image card */}
         <div className="flex-1">
           <div className="overflow-hidden rounded-3xl border border-slate-700/60 bg-slate-900/60 shadow-xl">
-            {/* Image */}
             <div className="relative aspect-[4/3]">
               <Image
                 src="/microfluidic-spiral.jpg"
@@ -68,7 +69,6 @@ export default function HomePage({
               />
             </div>
 
-            {/* Caption */}
             <div className="border-t border-slate-700/60 bg-slate-900/80 px-6 py-4">
               <p className="text-sm font-semibold text-white">
                 COC &amp; polycarbonate microfluidics
@@ -191,7 +191,6 @@ export default function HomePage({
           </p>
         </div>
 
-        {/* ✅ FIXED: this now submits to /api/contact */}
         <form
           action="/api/contact"
           method="post"
@@ -238,7 +237,6 @@ export default function HomePage({
             />
           </div>
 
-          {/* ✅ NEW: success/error message */}
           {enquiry === "sent" && (
             <div className="rounded-md border border-emerald-900/40 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-200">
               Enquiry submitted successfully — we’ll reply by email shortly.
@@ -250,7 +248,6 @@ export default function HomePage({
             </div>
           )}
 
-          {/* ✅ FIXED: submit button */}
           <button
             type="submit"
             className="mt-2 w-full rounded-full bg-[#0f6fff] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d72ff]"
