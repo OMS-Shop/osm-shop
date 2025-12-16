@@ -1,7 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function HomePage() {
+export default function HomePage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const enquiryParam = searchParams?.enquiry;
+  const enquiry =
+    typeof enquiryParam === "string"
+      ? enquiryParam
+      : Array.isArray(enquiryParam)
+      ? enquiryParam[0]
+      : undefined;
+
   return (
     <div className="bg-[#020617]">
       {/* ===== Hero ===== */}
@@ -225,6 +237,18 @@ export default function HomePage() {
               placeholder="Tell us briefly about your device, volumes and timelines."
             />
           </div>
+
+          {/* ✅ NEW: success/error message */}
+          {enquiry === "sent" && (
+            <div className="rounded-md border border-emerald-900/40 bg-emerald-950/30 px-3 py-2 text-xs text-emerald-200">
+              Enquiry submitted successfully — we’ll reply by email shortly.
+            </div>
+          )}
+          {enquiry === "error" && (
+            <div className="rounded-md border border-red-900/40 bg-red-950/30 px-3 py-2 text-xs text-red-200">
+              Something went wrong — please try again.
+            </div>
+          )}
 
           {/* ✅ FIXED: submit button */}
           <button
