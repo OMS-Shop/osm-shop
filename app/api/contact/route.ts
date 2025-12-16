@@ -56,6 +56,8 @@ export async function POST(req: Request) {
     `;
 
     const resend = new Resend(RESEND_API_KEY);
+
+    // 1) Staff email (you)
     const { data: sent, error } = await resend.emails.send({
       from: RESEND_FROM,
       to: [ENQUIRY_TO_EMAIL],
@@ -66,11 +68,34 @@ export async function POST(req: Request) {
 
     if (error) return jsonError("Resend send failed", 500, { resend: error });
 
-    // ✅ Keep behaviour user-friendly: redirect back to homepage with a flag
+    // 2) Customer confirmation email (do NOT block success if this fails)
+    const confirmSubject = "We received your enquiry (OSMS)";
+    const confirmHtml = `
+      <p>Hi ${escapeHtml(name || "there")},</p>
+      <p>Thanks — we’ve received your enquiry and will reply by email, usually within one working day.</p>
+      <hr/>
+      <p><b>Your message:</b><br/>${escapeHtml(message).replace(/\n/g, "<br/>")}</p>
+      <hr/>
+      <p>One-Stop Microfluidics Shop (OSMS)</p>
+    `;
+
+    const confirm = await resend.emails.send({
+      from: RESEND_FROM,
+      to: [email],
+      subject: confirmSubject,
+      html: confirmHtml,
+      replyTo: ENQUIRY_TO_EMAIL,
+    });
+
+    if (confirm.error) {
+      console.error("Enquiry customer confirmation failed:", confirm.error);
+    }
+
+    // ✅ Redirect back to the contact section so we can show a success box
     return new Response(null, {
       status: 303,
       headers: {
-        Location: "/?enquiry=sent",
+        Location: "/?enquiry=sent#contact",
       },
     });
   } catch (err: any) {
