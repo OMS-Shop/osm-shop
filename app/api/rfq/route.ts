@@ -59,12 +59,14 @@ function escapeHtml(s: string) {
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.RESEND_API_KEY) {
-      return jsonError("Missing RESEND_API_KEY env var", 500);
-    }
+    // ✅ Fail clearly if env vars are missing (no silent test-mode sending)
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    if (!RESEND_API_KEY) return jsonError("Missing RESEND_API_KEY env var", 500);
+
+    const RESEND_FROM = process.env.RESEND_FROM;
+    if (!RESEND_FROM) return jsonError("Missing RESEND_FROM env var", 500);
 
     const RFQ_TO_EMAIL = process.env.RFQ_TO_EMAIL || "Carl.Dale@GBInnovation.onmicrosoft.com";
-    const RESEND_FROM = process.env.RESEND_FROM || "OSMS <onboarding@resend.dev>"; // set to verified sender
 
     const body = await parseBody(req);
     if (!body) return jsonError("Empty or unreadable request body", 400);
@@ -80,8 +82,8 @@ export async function POST(req: Request) {
     const stage = (body.stage ?? "").toString().trim();
     const notes = (body.notes ?? "").toString().trim();
 
-    // ✅ Customer name field (what we are adding)
-    const contactName = (body.contactName ?? body.customerName ?? body.name ?? "").toString().trim();
+    // ✅ Customer name (what your form should send)
+    const contactName = (body.contactName ?? "").toString().trim();
 
     // ✅ Require customer name + email
     if (!contactName || !email) {
@@ -120,7 +122,9 @@ export async function POST(req: Request) {
       <pre style="white-space:pre-wrap;">${escapeHtml(JSON.stringify(body, null, 2))}</pre>
     `;
 
-    const { data, error } = await resend.emails.send({
+    const resendClient = new Resend(RESEND_API_KEY);
+
+    const { data, error } = await resendClient.emails.send({
       from: RESEND_FROM,
       to: [RFQ_TO_EMAIL],
       subject,
