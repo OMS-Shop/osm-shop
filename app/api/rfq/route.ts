@@ -1,115 +1,75 @@
-// app/api/rfq/route.ts
-
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { Resend } from "resend";
+
+export const runtime = "nodejs";            // IMPORTANT (avoid Edge runtime issues)
+export const dynamic = "force-dynamic";     // avoid any caching weirdness
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Inbox where RFQs arrive
-const PORTAL_INBOX = "Carl.Dale@GBInnovation.onmicrosoft.com";
+function jsonError(message: string, status = 500, extra?: any) {
+  return NextResponse.json({ ok: false, error: message, ...extra }, { status });
+}
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json();
-
-    // Be tolerant of different field names from the form
-    const contactEmail: string | undefined =
-      body.contactEmail ||
-      body.email ||
-      body.contact_email ||
-      body.contact ||
-      undefined;
-
-    const description: string | undefined =
-      body.description ||
-      body.briefDescription ||
-      body.applicationDescription ||
-      body.projectDescription ||
-      undefined;
-
-    const projectName: string | undefined =
-      body.projectName || body.project || body.title || undefined;
-
-    const company: string | undefined =
-      body.company || body.organisation || body.organization || undefined;
-
-    const country: string | undefined = body.country || undefined;
-    const quantity: string | number | undefined = body.quantity;
-    const material: string | undefined = body.primaryMaterial || body.material;
-    const stage: string | undefined = body.stage || body.projectStage;
-    const notes: string | undefined =
-      body.technicalNotes || body.notes || body.comments;
-
-    // Minimal validation
-    if (
-      !contactEmail ||
-      typeof contactEmail !== "string" ||
-      !description ||
-      typeof description !== "string"
-    ) {
-      return NextResponse.json(
-        {
-          error: "Please provide a contact email and brief description.",
-        },
-        { status: 400 }
-      );
+    if (!process.env.RESEND_API_KEY) {
+      return jsonError("Missing RESEND_API_KEY env var", 500);
     }
 
-    // Build a simple text email
-    const lines: string[] = [];
+    const RFQ_TO_EMAIL =
+      process.env.RFQ_TO_EMAIL || "Carl.Dale@GBInnovation.onmicrosoft.com";
 
-    lines.push("New RFQ submitted via OSMS portal");
-    lines.push("---------------------------------");
-    lines.push(`Contact email: ${contactEmail}`);
-    if (projectName) lines.push(`Project name: ${projectName}`);
-    if (company) lines.push(`Company: ${company}`);
-    if (country) lines.push(`Country: ${country}`);
-    if (quantity !== undefined) lines.push(`Quantity: ${quantity}`);
-    if (material) lines.push(`Material: ${material}`);
-    if (stage) lines.push(`Stage: ${stage}`);
-    lines.push("");
-    lines.push("Description / brief:");
-    lines.push(description);
-    lines.push("");
-    if (notes) {
-      lines.push("Technical notes:");
-      lines.push(notes);
-      lines.push("");
+    const RESEND_FROM =
+      process.env.RESEND_FROM || "OSMS <onboarding@resend.dev>"; // change to your verified sender
+
+    const body = await req.json().catch(() => null);
+    if (!body) return jsonError("Invalid JSON body", 400);
+
+    // Adjust these fields to match your form payload
+    const name = (body.name ?? "").toString().trim();
+    const email = (body.email ?? "").toString().trim();
+    const company = (body.company ?? "").toString().trim();
+    const message = (body.message ?? "").toString().trim();
+
+    if (!name || !email) {
+      return jsonError("Missing required fields: name, email", 400, { fields: { name, email } });
     }
 
-    const text = lines.join("\n");
+    const subject = `Microbritt / OSMS RFQ – ${name}${company ? ` (${company})` : ""}`;
 
-    // IMPORTANT: use Resend's default verified sender domain
-    // to avoid domain-verification errors.
+    const html = `
+      <h2>New RFQ</h2>
+      <p><b>Name:</b> ${escapeHtml(name)}</p>
+      <p><b>Email:</b> ${escapeHtml(email)}</p>
+      <p><b>Company:</b> ${escapeHtml(company || "-")}</p>
+      <p><b>Message:</b><br/>${escapeHtml(message || "-").replace(/\n/g, "<br/>")}</p>
+      <hr/>
+      <pre style="white-space:pre-wrap;">${escapeHtml(JSON.stringify(body, null, 2))}</pre>
+    `;
+
     const { data, error } = await resend.emails.send({
-      from: "OSMS Portal <onboarding@resend.dev>",
-      to: [PORTAL_INBOX],
-      subject: projectName
-        ? `OSMS RFQ – ${projectName}`
-        : "OSMS RFQ – New request",
-      reply_to: contactEmail, // this is allowed in current Resend API
-      text,
+      from: RESEND_FROM,
+      to: [RFQ_TO_EMAIL],
+      subject,
+      html,
+      replyTo: email,
     });
 
     if (error) {
-      console.error("Resend error while sending RFQ email", error);
-      return NextResponse.json(
-        {
-          error: "Email provider error when sending RFQ.",
-        },
-        { status: 500 }
-      );
+      return jsonError("Resend send failed", 500, { resend: error });
     }
 
-    return NextResponse.json({
-      success: true,
-      id: data?.id ?? null,
-    });
-  } catch (err) {
-    console.error("RFQ API unexpected error", err);
-    return NextResponse.json(
-      { error: "Failed to submit RFQ" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: true, id: data?.id ?? null });
+  } catch (err: any) {
+    return jsonError(err?.message || "Server error", 500);
   }
+}
+
+function escapeHtml(s: string) {
+  return s
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
