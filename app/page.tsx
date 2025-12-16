@@ -3,9 +3,28 @@ import Link from "next/link";
 import { Suspense } from "react";
 import EnquiryAlert from "./components/EnquiryAlert";
 
+function GreenTick() {
+  return (
+    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/25">
+      <svg
+        viewBox="0 0 24 24"
+        className="h-3.5 w-3.5 text-emerald-300"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M20 6L9 17l-5-5" />
+      </svg>
+    </span>
+  );
+}
+
 export default function HomePage() {
   return (
-    <div className="relative">
+    <div className="relative bg-[#020617]">
       {/* Ambient background (clip ONLY the background, not the content) */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-sky-500/10 blur-3xl" />
@@ -19,8 +38,9 @@ export default function HomePage() {
           {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/40 px-3 py-1 text-xs text-slate-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
-              Quote-only at launch • Response typically within 1 working day
+              <GreenTick />
+              Upload &amp; request a quote • Response typically within 1 working
+              day
             </div>
 
             <h1 className="mt-5 text-4xl font-semibold leading-tight text-white md:text-5xl">
@@ -366,7 +386,6 @@ export default function HomePage() {
             />
           </div>
 
-          {/* ✅ Success/error banner (client-side) */}
           <Suspense fallback={null}>
             <EnquiryAlert />
           </Suspense>
