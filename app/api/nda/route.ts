@@ -29,6 +29,7 @@ async function parseBody(req: Request): Promise<any | null> {
         else obj[k] = [obj[k], v];
       }
     }
+
     if (files.length) obj.files = files;
     return obj;
   }
@@ -76,8 +77,6 @@ export async function POST(req: Request) {
       });
     }
 
-    const subject = `Microbritt / OSMS NDA – ${name || company || email}`;
-
     const filesHtml =
       Array.isArray(body.files) && body.files.length
         ? `<hr/><p><b>Files (metadata only):</b></p><ul>${body.files
@@ -88,7 +87,9 @@ export async function POST(req: Request) {
             .join("")}</ul>`
         : "";
 
-    const html = `
+    const subject = `Microbritt / OSMS NDA – ${name || company || email}`;
+
+    const staffHtml = `
       <h2>NDA submission</h2>
       <p><b>Name:</b> ${escapeHtml(name || "-")}</p>
       <p><b>Email:</b> ${escapeHtml(email)}</p>
@@ -99,18 +100,48 @@ export async function POST(req: Request) {
       <pre style="white-space:pre-wrap;">${escapeHtml(JSON.stringify(body, null, 2))}</pre>
     `;
 
-    const resend = new Resend(RESEND_API_KEY);
-    const { data, error } = await resend.emails.send({
+    const resendClient = new Resend(RESEND_API_KEY);
+
+    // 1) Staff email
+    const staffSend = await resendClient.emails.send({
       from: RESEND_FROM,
       to: [NDA_TO_EMAIL],
       subject,
-      html,
+      html: staffHtml,
       replyTo: email,
     });
 
-    if (error) return jsonError("Resend send failed", 500, { resend: error });
+    if (staffSend.error) return jsonError("Resend send failed", 500, { resend: staffSend.error });
 
-    return NextResponse.json({ ok: true, id: data?.id ?? null });
+    // 2) Customer confirmation email (won’t block success if it fails)
+    const confirmSubject = "We received your NDA request (OSMS)";
+    const confirmHtml = `
+      <p>Hi ${escapeHtml(name || "there")},</p>
+      <p>Thanks — we’ve received your NDA request and will reply by email shortly.</p>
+      <hr/>
+      <p><b>Company:</b> ${escapeHtml(company || "-")}</p>
+      <p><b>Notes:</b><br/>${escapeHtml(notes || "-").replace(/\n/g, "<br/>")}</p>
+      <hr/>
+      <p>One-Stop Microfluidics Shop (OSMS)</p>
+    `;
+
+    const confirm = await resendClient.emails.send({
+      from: RESEND_FROM,
+      to: [email],
+      subject: confirmSubject,
+      html: confirmHtml,
+      replyTo: NDA_TO_EMAIL,
+    });
+
+    if (confirm.error) {
+      console.error("NDA customer confirmation failed:", confirm.error);
+    }
+
+    return NextResponse.json({
+      ok: true,
+      id: staffSend.data?.id ?? null,
+      customerConfirmation: confirm.error ? "failed" : "sent",
+    });
   } catch (err: any) {
     return jsonError(err?.message || "Server error", 500);
   }

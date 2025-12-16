@@ -59,7 +59,6 @@ function escapeHtml(s: string) {
 
 export async function POST(req: Request) {
   try {
-    // ✅ Fail clearly if env vars are missing (no silent test-mode sending)
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
     if (!RESEND_API_KEY) return jsonError("Missing RESEND_API_KEY env var", 500);
 
@@ -71,7 +70,6 @@ export async function POST(req: Request) {
     const body = await parseBody(req);
     if (!body) return jsonError("Empty or unreadable request body", 400);
 
-    // ✅ Your payload keys (based on receivedKeys)
     const projectName = (body.projectName ?? "").toString().trim();
     const company = (body.company ?? "").toString().trim();
     const email = (body.email ?? "").toString().trim();
@@ -82,10 +80,8 @@ export async function POST(req: Request) {
     const stage = (body.stage ?? "").toString().trim();
     const notes = (body.notes ?? "").toString().trim();
 
-    // ✅ Customer name (what your form should send)
     const contactName = (body.contactName ?? "").toString().trim();
 
-    // ✅ Require customer name + email
     if (!contactName || !email) {
       return jsonError("Missing required fields: contactName, email", 400, {
         fields: { contactName, email },
@@ -124,6 +120,7 @@ export async function POST(req: Request) {
 
     const resendClient = new Resend(RESEND_API_KEY);
 
+    // 1) Staff email
     const { data, error } = await resendClient.emails.send({
       from: RESEND_FROM,
       to: [RFQ_TO_EMAIL],
@@ -136,7 +133,36 @@ export async function POST(req: Request) {
       return jsonError("Resend send failed", 500, { resend: error });
     }
 
-    return NextResponse.json({ ok: true, id: data?.id ?? null });
+    // 2) Customer confirmation email (won’t block success if it fails)
+    const confirmSubject = "We received your RFQ (OSMS)";
+    const confirmHtml = `
+      <p>Hi ${escapeHtml(contactName)},</p>
+      <p>Thanks — we’ve received your RFQ and will reply by email, usually within one working day.</p>
+      <hr/>
+      <p><b>Project:</b> ${escapeHtml(projectName || "-")}</p>
+      <p><b>Company:</b> ${escapeHtml(company || "-")}</p>
+      <p><b>Notes:</b><br/>${escapeHtml(notes || "-").replace(/\n/g, "<br/>")}</p>
+      <hr/>
+      <p>One-Stop Microfluidics Shop (OSMS)</p>
+    `;
+
+    const confirm = await resendClient.emails.send({
+      from: RESEND_FROM,
+      to: [email],
+      subject: confirmSubject,
+      html: confirmHtml,
+      replyTo: RFQ_TO_EMAIL,
+    });
+
+    if (confirm.error) {
+      console.error("RFQ customer confirmation failed:", confirm.error);
+    }
+
+    return NextResponse.json({
+      ok: true,
+      id: data?.id ?? null,
+      customerConfirmation: confirm.error ? "failed" : "sent",
+    });
   } catch (err: any) {
     return jsonError(err?.message || "Server error", 500);
   }
