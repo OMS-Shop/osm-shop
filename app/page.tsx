@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import EnquiryAlert from "./components/EnquiryAlert";
 
 export default function HomePage() {
@@ -226,8 +227,10 @@ export default function HomePage() {
             />
           </div>
 
-          {/* ✅ Banner that always works (client-side) */}
-          <EnquiryAlert />
+          {/* ✅ Success/error banner (client-side, wrapped in Suspense) */}
+          <Suspense fallback={null}>
+            <EnquiryAlert />
+          </Suspense>
 
           <button
             type="submit"
