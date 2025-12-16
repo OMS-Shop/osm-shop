@@ -1,95 +1,98 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
-
-const STAFF_EMAIL = "Carl.Dale@GBInnovation.onmicrosoft.com";
-// 👉 You can change this password to whatever you like.
-// This is just for a prototype – not production-secure.
-const STAFF_PASSWORD = "OSMportal2024!";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState(STAFF_EMAIL);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const sp = useSearchParams();
+  const nextPath = useMemo(() => sp.get("next") || "/admin", [sp]);
 
-  function handleSubmit(e: FormEvent) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
-    if (
-      email.trim().toLowerCase() === STAFF_EMAIL.toLowerCase() &&
-      password === STAFF_PASSWORD
-    ) {
-      // Mark staff as "logged in" in the browser
-      if (typeof window !== "undefined") {
-        localStorage.setItem("osmStaffLoggedIn", "true");
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(data?.error || `Login failed (${res.status})`);
       }
-      router.push("/admin");
-      return;
-    }
 
-    setError("Incorrect email or password.");
+      window.location.href = nextPath;
+    } catch (err: any) {
+      setError(err?.message || "Login failed");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-50">
-      <div className="max-w-md mx-auto px-4 py-10 space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-2xl font-semibold">Staff login</h1>
-          <p className="text-sm text-slate-300">
-            This login is for internal use to view RFQs and NDA acceptances.
-          </p>
-        </header>
+    <div className="mx-auto max-w-md px-6 py-12">
+      <h1 className="text-3xl font-semibold text-slate-100">Staff login</h1>
+      <p className="mt-2 text-sm text-slate-300">
+        Use your staff email and password to access the admin area.
+      </p>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Email address
-            </label>
+      <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-slate-200">Email</label>
             <input
+              className={inputClass}
               type="email"
-              className="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-slate-200">Password</label>
             <input
+              className={inputClass}
               type="password"
-              className="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               required
             />
           </div>
 
           {error && (
-            <p className="text-sm text-rose-400 bg-rose-900/30 border border-rose-700 rounded-md px-3 py-2">
+            <div className="rounded-lg border border-red-900/40 bg-red-950/30 p-3 text-sm text-red-200">
               {error}
-            </p>
+            </div>
           )}
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium bg-sky-500 hover:bg-sky-400 disabled:opacity-60 disabled:cursor-not-allowed text-slate-950 transition"
+            className="w-full rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-60"
           >
-            {isSubmitting ? "Signing in…" : "Sign in"}
+            {isSubmitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <p className="text-xs text-slate-500">
-          Prototype only – this login is implemented client-side and is not
-          suitable for production security. We&apos;ll replace it with proper
-          auth later.
+        <p className="mt-4 text-xs text-slate-400">
+          Tip: If you land on /admin and get bounced back here, your session cookie is missing/expired.
         </p>
       </div>
-    </main>
+    </div>
   );
 }
+
+const inputClass =
+  "w-full rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30";
