@@ -22,6 +22,25 @@ function GreenTick() {
   );
 }
 
+function FlowArrow() {
+  return (
+    <div aria-hidden className="hidden md:flex items-center justify-center px-1">
+      <svg
+        viewBox="0 0 24 24"
+        className="h-6 w-6 text-white/70"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M5 12h14" />
+        <path d="M13 6l6 6-6 6" />
+      </svg>
+    </div>
+  );
+}
+
 export default function HomePage() {
   return (
     <div className="relative bg-[#020617]">
@@ -77,7 +96,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* ✅ Hero bullets with green ticks */}
+            {/* Hero bullets with green ticks */}
             <div className="mt-6 grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5">
@@ -225,37 +244,53 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {[
-            {
-              n: "1",
-              t: "Upload your design",
-              d: "Send CAD + a few key details (material, quantity, target date).",
-            },
-            {
-              n: "2",
-              t: "We prepare a quote",
-              d: "We run a quick DFM check and return a clear quote by email.",
-            },
-            {
-              n: "3",
-              t: "Manufacture & delivery",
-              d: "Once approved, we coordinate production and keep you updated.",
-            },
-          ].map((x) => (
-            <div
-              key={x.n}
-              className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 text-sm font-bold text-sky-300">
-                  {x.n}
-                </div>
-                <h3 className="text-sm font-semibold text-white">{x.t}</h3>
+        {/* ✅ Cards with white arrows between (desktop) */}
+        <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-stretch">
+          <div className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 text-sm font-bold text-sky-300">
+                1
               </div>
-              <p className="mt-3 text-sm text-slate-300">{x.d}</p>
+              <h3 className="text-sm font-semibold text-white">
+                Upload your design
+              </h3>
             </div>
-          ))}
+            <p className="mt-3 text-sm text-slate-300">
+              Send CAD + a few key details (material, quantity, target date).
+            </p>
+          </div>
+
+          <FlowArrow />
+
+          <div className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 text-sm font-bold text-sky-300">
+                2
+              </div>
+              <h3 className="text-sm font-semibold text-white">
+                We prepare a quote
+              </h3>
+            </div>
+            <p className="mt-3 text-sm text-slate-300">
+              We run a quick DFM check and return a clear quote by email.
+            </p>
+          </div>
+
+          <FlowArrow />
+
+          <div className="flex-1 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/15 text-sm font-bold text-sky-300">
+                3
+              </div>
+              <h3 className="text-sm font-semibold text-white">
+                Manufacture &amp; delivery
+              </h3>
+            </div>
+            <p className="mt-3 text-sm text-slate-300">
+              Once approved, we coordinate production and keep you updated.
+            </p>
+          </div>
         </div>
       </section>
 
