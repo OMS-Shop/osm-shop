@@ -28,11 +28,9 @@ export default function UploadPage() {
     try {
       const fd = new FormData();
 
-      // ✅ required
       fd.append("contactName", contactName);
       fd.append("email", email);
 
-      // other fields
       fd.append("projectName", projectName);
       fd.append("company", company);
       fd.append("country", country);
@@ -46,13 +44,19 @@ export default function UploadPage() {
 
       const res = await fetch("/api/rfq", {
         method: "POST",
-        body: fd, // IMPORTANT: do not set Content-Type manually
+        body: fd,
       });
 
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
-        throw new Error(data?.error || `RFQ failed (${res.status})`);
+        const resendMsg =
+          data?.resend?.message ||
+          data?.resend?.error ||
+          (data?.resend ? JSON.stringify(data.resend) : "");
+
+        const msg = [data?.error, resendMsg].filter(Boolean).join(" — ");
+        throw new Error(msg || `RFQ failed (${res.status})`);
       }
 
       setSuccess("RFQ sent successfully.");
