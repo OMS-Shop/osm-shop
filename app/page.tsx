@@ -1,152 +1,240 @@
-"use client";
-
-import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-    setIsSubmitting(true);
-
-    try {
-      const fd = new FormData();
-      fd.append("name", name);
-      fd.append("email", email);
-      fd.append("message", message);
-
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        body: fd, // IMPORTANT: don't set Content-Type manually for FormData
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.error || `Enquiry failed (${res.status})`);
-      }
-
-      setSuccess("Enquiry sent. We’ll get back to you soon.");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } catch (err: any) {
-      setError(err?.message || "Something went wrong");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
   return (
-    <main className="min-h-screen">
-      <div className="mx-auto max-w-5xl px-6 py-12">
-        <h1 className="text-4xl font-semibold text-slate-100">
-          One-Stop Microfluidics Shop
-        </h1>
-        <p className="mt-3 text-slate-300">
-          Upload your design for an RFQ, or send an enquiry below.
-        </p>
+    <div className="bg-[#020617]">
+      {/* ===== Hero ===== */}
+      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-16 pt-10 md:flex-row md:items-center md:pt-14">
+        {/* Left: headline & CTAs */}
+        <div className="flex-1">
+          <h1 className="text-4xl font-semibold leading-tight text-white md:text-5xl">
+            From{" "}
+            <span className="text-[#0f6fff]">1 to 100,000 units</span> of
+            microfluidic parts, through a single portal
+          </h1>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <a
-            href="/upload"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-500"
-          >
-            Upload design (RFQ)
-          </a>
-
-          <a
-            href="/portal"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-950/40 px-5 py-2.5 text-sm font-medium text-slate-100 hover:bg-slate-900"
-          >
-            View my orders
-          </a>
-        </div>
-
-        {/* CONTACT / ENQUIRY */}
-        <section className="mt-12 rounded-2xl border border-slate-800 bg-slate-950/40 p-6">
-          <h2 className="text-2xl font-semibold text-slate-100">Send enquiry</h2>
-          <p className="mt-2 text-sm text-slate-300">
-            Tell us what you’re trying to build and we’ll reply by email.
+          <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-300">
+            We coordinate microfluidic manufacturing across 3D printing, CNC
+            machining and injection moulding. Upload your design once and we
+            take care of the rest – from early prototypes through to volume
+            production.
           </p>
 
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
-            <Field label="Name">
-              <input
-                className={inputClass}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-              />
-            </Field>
-
-            <Field label="Email *">
-              <input
-                className={inputClass}
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
-              />
-            </Field>
-
-            <Field label="Message *">
-              <textarea
-                className={textareaClass}
-                required
-                rows={5}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="What do you need? Material, size, quantity, deadline, bonding, etc."
-              />
-            </Field>
-
-            {error && (
-              <div className="rounded-lg border border-red-900/40 bg-red-950/30 p-3 text-sm text-red-200">
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="rounded-lg border border-emerald-900/40 bg-emerald-950/30 p-3 text-sm text-emerald-200">
-                {success}
-              </div>
-            )}
-
-            {/* IMPORTANT: force clickability */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="relative z-10 pointer-events-auto inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-60"
+          <div className="mt-7 flex flex-wrap gap-4">
+            <Link
+              href="/upload"
+              className="rounded-full bg-[#0f6fff] px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#1d72ff]"
             >
-              {isSubmitting ? "Sending..." : "Send enquiry"}
-            </button>
-          </form>
-        </section>
-      </div>
-    </main>
-  );
-}
+              Upload design &amp; get started
+            </Link>
+            <Link
+              href="/portal"
+              className="rounded-full border border-slate-500 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-300"
+            >
+              View my orders
+            </Link>
+          </div>
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      <label className="text-sm font-medium text-slate-200">{label}</label>
-      {children}
+          <p className="mt-4 text-xs text-slate-400">
+            No up-front commitment. We&apos;ll review your order request and
+            respond with a detailed quote by email.
+          </p>
+        </div>
+
+        {/* Right: hero image card */}
+        <div className="flex-1">
+          <div className="overflow-hidden rounded-3xl border border-slate-700/60 bg-slate-900/60 shadow-xl">
+            {/* Image */}
+            <div className="relative aspect-[4/3]">
+              <Image
+                src="/microfluidic-spiral.jpg"
+                alt="COC microfluidic spiral part"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            {/* Caption */}
+            <div className="border-t border-slate-700/60 bg-slate-900/80 px-6 py-4">
+              <p className="text-sm font-semibold text-white">
+                COC &amp; polycarbonate microfluidics
+              </p>
+              <p className="mt-1 text-xs text-slate-400">
+                Precision components for diagnostics, life-science and quantum
+                devices – prepared for seamless scale-up.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Three-step cards (How it works) ===== */}
+      <section
+        id="how-it-works"
+        className="mx-auto grid max-w-6xl gap-4 px-6 pb-16 md:grid-cols-3"
+      >
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h3 className="text-sm font-semibold text-white">
+            1. Upload your design
+          </h3>
+          <p className="mt-3 text-xs text-slate-300">
+            Send us your microfluidic design once. Tell us your target volumes,
+            materials and timelines.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h3 className="text-sm font-semibold text-white">
+            2. We prepare a quote
+          </h3>
+          <p className="mt-3 text-xs text-slate-300">
+            Our internal team cost your job, align it with the right production
+            route and send a formal Xero quote.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h3 className="text-sm font-semibold text-white">
+            3. Manufacture &amp; delivery
+          </h3>
+          <p className="mt-3 text-xs text-slate-300">
+            Once the quote is accepted and payment is received, manufacture
+            starts and we keep you updated through the portal.
+          </p>
+        </div>
+      </section>
+
+      {/* ===== Volume, materials, routes ===== */}
+      <section id="processes" className="mx-auto max-w-6xl space-y-4 px-6 pb-16">
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h4 className="text-xs font-semibold tracking-wide text-slate-400">
+            VOLUME RANGE
+          </h4>
+          <p className="mt-2 text-sm font-medium text-white">1–100k+ units</p>
+          <p className="mt-1 text-xs text-slate-300">
+            From first articles and pilot runs through to scale-up and recurring
+            production.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h4 className="text-xs font-semibold tracking-wide text-slate-400">
+            MAIN MATERIALS
+          </h4>
+          <p className="mt-2 text-sm font-medium text-white">
+            COC &amp; polycarbonate
+          </p>
+          <p className="mt-1 text-xs text-slate-300">
+            Other engineering thermoplastics available on request.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h4 className="text-xs font-semibold tracking-wide text-slate-400">
+            MANUFACTURING ROUTES
+          </h4>
+          <p className="mt-2 text-sm font-medium text-white">
+            3D print · CNC · mould
+          </p>
+          <p className="mt-1 text-xs text-slate-300">
+            We match your design to the most appropriate route for cost and
+            performance.
+          </p>
+        </div>
+      </section>
+
+      {/* ===== Confidentiality ===== */}
+      <section id="confidentiality" className="mx-auto max-w-6xl px-6 pb-12">
+        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+          <h2 className="text-base font-semibold text-white">
+            Confidential by design
+          </h2>
+          <p className="mt-3 max-w-3xl text-xs text-slate-300">
+            Your designs and data are handled under strict confidentiality.{" "}
+            <Link href="/nda" className="text-[#0f6fff] hover:underline">
+              NDAs are available on request
+            </Link>{" "}
+            and we only share the minimum technical detail required for
+            manufacture internally. Order status and documentation are
+            accessible via your secure customer portal.
+          </p>
+        </div>
+      </section>
+
+      {/* ===== Contact ===== */}
+      <section
+        id="contact"
+        className="mx-auto max-w-6xl grid gap-6 px-6 pb-20 md:grid-cols-[1.1fr_minmax(0,1fr)]"
+      >
+        <div>
+          <h2 className="text-base font-semibold text-white">
+            Talk to us about your next run
+          </h2>
+          <p className="mt-3 max-w-xl text-xs text-slate-300">
+            Not sure if your design is ready, or exploring production options?
+            Send us a short message and we&apos;ll respond by email, usually
+            within one working day.
+          </p>
+        </div>
+
+        {/* ✅ FIXED: this now submits to /api/contact */}
+        <form
+          action="/api/contact"
+          method="post"
+          className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/60 p-5"
+        >
+          <div className="space-y-1 text-xs">
+            <label className="block text-slate-300" htmlFor="name">
+              Your name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#0f6fff]"
+              placeholder="e.g. Jane Doe"
+            />
+          </div>
+
+          <div className="space-y-1 text-xs">
+            <label className="block text-slate-300" htmlFor="email">
+              Email address
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#0f6fff]"
+              placeholder="you@company.com"
+            />
+          </div>
+
+          <div className="space-y-1 text-xs">
+            <label className="block text-slate-300" htmlFor="message">
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={3}
+              required
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#0f6fff]"
+              placeholder="Tell us briefly about your device, volumes and timelines."
+            />
+          </div>
+
+          {/* ✅ FIXED: submit button */}
+          <button
+            type="submit"
+            className="mt-2 w-full rounded-full bg-[#0f6fff] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d72ff]"
+          >
+            Send enquiry
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
-
-const inputClass =
-  "w-full rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30";
-
-const textareaClass =
-  "w-full rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2 text-slate-100 placeholder:text-slate-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30";
