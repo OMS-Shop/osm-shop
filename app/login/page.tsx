@@ -1,16 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+export const dynamic = "force-dynamic";
+
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
-  const sp = useSearchParams();
-  const nextPath = useMemo(() => sp.get("next") || "/admin", [sp]);
+  const [nextPath, setNextPath] = useState("/admin");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Read ?next=/somewhere safely on the client (no useSearchParams hook)
+  useEffect(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const n = sp.get("next");
+      if (n && n.startsWith("/")) setNextPath(n);
+    } catch {
+      // ignore
+    }
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -85,10 +96,6 @@ export default function LoginPage() {
             {isSubmitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
-
-        <p className="mt-4 text-xs text-slate-400">
-          Tip: If you land on /admin and get bounced back here, your session cookie is missing/expired.
-        </p>
       </div>
     </div>
   );
