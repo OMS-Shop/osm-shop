@@ -5,16 +5,16 @@ import EnquiryAlert from "./components/EnquiryAlert";
 
 export default function HomePage() {
   return (
-    <div className="relative overflow-hidden">
-      {/* Ambient background */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+    <div className="relative">
+      {/* Ambient background (clip ONLY the background, not the content) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-24 left-1/2 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-sky-500/10 blur-3xl" />
         <div className="absolute -bottom-40 right-[-10rem] h-80 w-80 rounded-full bg-indigo-500/10 blur-3xl" />
         <div className="absolute -bottom-40 left-[-10rem] h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl" />
       </div>
 
       {/* ===== Hero ===== */}
-      <section className="relative">
+      <section className="relative pt-2 md:pt-4">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_minmax(0,0.85fr)] lg:items-center">
           {/* Left */}
           <div>
@@ -39,19 +39,19 @@ export default function HomePage() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/upload"
-                className="rounded-full bg-sky-500 px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-sky-600 transition-colors"
+                className="rounded-full bg-sky-500 px-6 py-2.5 text-sm font-semibold text-white shadow transition-colors hover:bg-sky-600"
               >
                 Upload design &amp; get started
               </Link>
               <Link
                 href="/portal"
-                className="rounded-full border border-slate-600 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-300 transition-colors"
+                className="rounded-full border border-slate-600 px-6 py-2.5 text-sm font-medium text-slate-100 transition-colors hover:border-slate-300"
               >
                 View my orders
               </Link>
               <Link
                 href="/nda"
-                className="rounded-full border border-slate-800 bg-slate-900/40 px-6 py-2.5 text-sm font-medium text-slate-200 hover:border-slate-600 transition-colors"
+                className="rounded-full border border-slate-800 bg-slate-900/40 px-6 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-slate-600"
               >
                 Request NDA
               </Link>
@@ -245,7 +245,7 @@ export default function HomePage() {
             },
             {
               t: "Bonding & sealing",
-              d: "Practical routes for closed chips — often required for CNC parts.",
+              d: "Thermal bonding methods which do not introduce chemical contamination or crazing of the channels",
             },
             {
               t: "Fast iteration",
@@ -366,14 +366,14 @@ export default function HomePage() {
             />
           </div>
 
-          {/* ✅ Success/error banner (client-side, wrapped in Suspense) */}
+          {/* ✅ Success/error banner (client-side) */}
           <Suspense fallback={null}>
             <EnquiryAlert />
           </Suspense>
 
           <button
             type="submit"
-            className="mt-2 w-full rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-600 transition-colors"
+            className="mt-2 w-full rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-600"
           >
             Send enquiry
           </button>
