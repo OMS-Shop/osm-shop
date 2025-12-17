@@ -64,10 +64,16 @@ export default function RootLayout({
                 >
                   Processes &amp; volumes
                 </Link>
+
+                {/* ✅ NEW: Resources link */}
                 <Link
-                  href="/nda"
+                  href="/resources"
                   className="hover:text-white transition-colors"
                 >
+                  Resources
+                </Link>
+
+                <Link href="/nda" className="hover:text-white transition-colors">
                   Confidentiality
                 </Link>
                 <Link
@@ -88,7 +94,7 @@ export default function RootLayout({
                   href="/upload"
                   className="rounded-full bg-[#0ea5e9] px-4 py-1.5 text-xs font-semibold text-white shadow hover:bg-[#0284c7] transition-colors"
                 >
-                  Upload design
+                  Upload &amp; request a quote
                 </Link>
               </nav>
             </div>

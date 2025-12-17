@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
+import EnquiryAlert from "./components/EnquiryAlert";
 
 function GreenTick() {
   return (
@@ -57,6 +59,7 @@ export default function HomePage() {
             production.
           </p>
 
+          {/* ✅ Hero CTAs: keep clean (no material parameters button) */}
           <div className="mt-7 flex flex-wrap gap-4">
             <Link
               href="/upload"
@@ -72,14 +75,28 @@ export default function HomePage() {
               View my orders
             </Link>
 
+            {/* ✅ NDA button back */}
             <Link
-              href="/resources#material-parameters"
+              href="/nda"
               className="rounded-full border border-slate-700 bg-slate-900/40 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-400"
             >
-              Material parameters
+              NDA / confidentiality
             </Link>
           </div>
 
+          {/* ✅ Material parameters link (NOT a hero button) */}
+          <p className="mt-3 text-xs text-slate-400">
+            Comparing materials (PMMA vs PC vs COC/COP vs 3D print)?{" "}
+            <Link
+              href="/resources#material-parameters"
+              className="text-[#0f6fff] hover:underline"
+            >
+              See material parameters
+            </Link>
+            .
+          </p>
+
+          {/* ✅ 4 key points (with green ticks) */}
           <div className="mt-6 grid max-w-xl gap-3 text-sm">
             <div className="flex items-start gap-3">
               <GreenTick />
@@ -88,35 +105,40 @@ export default function HomePage() {
                 – send files, quantities and key requirements once.
               </p>
             </div>
+
             <div className="flex items-start gap-3">
               <GreenTick />
               <p className="text-slate-300">
                 <span className="font-semibold text-white">COC is mould-ready</span>{" "}
-                and ideal for scale-up (we also support PMMA, PC and more).
+                and commonly selected for scale-up.
               </p>
             </div>
+
             <div className="flex items-start gap-3">
               <GreenTick />
               <p className="text-slate-300">
                 <span className="font-semibold text-white">Secure NDA workflow</span>{" "}
-                – sign and upload with email confirmation.
+                – sign and submit with email confirmation.
               </p>
             </div>
+
             <div className="flex items-start gap-3">
               <GreenTick />
               <p className="text-slate-300">
-                <span className="font-semibold text-white">Clear bonding options</span>{" "}
-                – thermal bonding methods which do not introduce chemical contamination or crazing of the channels.
+                <span className="font-semibold text-white">Bonding ready</span> –{" "}
+                thermal bonding methods which do not introduce chemical contamination
+                or crazing of the channels.
               </p>
             </div>
           </div>
 
           <p className="mt-4 text-xs text-slate-400">
-            No up-front commitment. We’ll review your request and respond by email.
+            No up-front commitment. We&apos;ll review your request and respond by
+            email.
           </p>
         </div>
 
-        {/* Right */}
+        {/* Right image card */}
         <div className="flex-1">
           <div className="overflow-hidden rounded-3xl border border-slate-700/60 bg-slate-900/60 shadow-xl">
             <div className="relative aspect-[4/3]">
@@ -128,6 +150,7 @@ export default function HomePage() {
                 priority
               />
             </div>
+
             <div className="border-t border-slate-700/60 bg-slate-900/80 px-6 py-4">
               <p className="text-sm font-semibold text-white">
                 COC &amp; polycarbonate microfluidics
@@ -142,10 +165,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== How it works (with arrows) ===== */}
-      <section
-        id="how-it-works"
-        className="mx-auto max-w-6xl px-6 pb-16"
-      >
+      <section id="how-it-works" className="mx-auto max-w-6xl px-6 pb-16">
         <div className="flex flex-col gap-4 md:flex-row md:items-stretch">
           <div className="flex-1 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
             <h3 className="text-sm font-semibold text-white">
@@ -164,7 +184,8 @@ export default function HomePage() {
               2. We prepare a quote
             </h3>
             <p className="mt-3 text-xs text-slate-300">
-              We check feasibility, confirm assumptions, and send a detailed quote by email.
+              We check feasibility, confirm assumptions, and send a detailed
+              quote by email.
             </p>
           </div>
 
@@ -175,7 +196,8 @@ export default function HomePage() {
               3. Manufacture &amp; delivery
             </h3>
             <p className="mt-3 text-xs text-slate-300">
-              Once agreed, we manufacture and keep you updated through the portal.
+              Once agreed, we manufacture and keep you updated through the
+              portal.
             </p>
           </div>
         </div>
@@ -189,7 +211,8 @@ export default function HomePage() {
           </h4>
           <p className="mt-2 text-sm font-medium text-white">1–100k+ units</p>
           <p className="mt-1 text-xs text-slate-300">
-            From first articles and pilot runs through to scale-up and recurring production.
+            From first articles and pilot runs through to scale-up and recurring
+            production.
           </p>
         </div>
 
@@ -201,7 +224,7 @@ export default function HomePage() {
             COC · COP · polycarbonate · PMMA
           </p>
           <p className="mt-1 text-xs text-slate-300">
-            We’ll recommend the best material for your application and manufacturing route.{" "}
+            Want a quick comparison?{" "}
             <Link
               href="/resources#material-parameters"
               className="text-[#0f6fff] hover:underline"
@@ -220,7 +243,8 @@ export default function HomePage() {
             3D print · CNC · mould
           </p>
           <p className="mt-1 text-xs text-slate-300">
-            We match your design to the most appropriate route for cost and performance.
+            We match your design to the most appropriate route for cost and
+            performance.
           </p>
         </div>
       </section>
@@ -236,7 +260,8 @@ export default function HomePage() {
             <Link href="/nda" className="text-[#0f6fff] hover:underline">
               NDAs are available on request
             </Link>{" "}
-            and we only share the minimum technical detail required for manufacture internally.
+            and we only share the minimum technical detail required for
+            manufacture internally.
           </p>
         </div>
       </section>
@@ -252,7 +277,8 @@ export default function HomePage() {
           </h2>
           <p className="mt-3 max-w-xl text-xs text-slate-300">
             Not sure if your design is ready, or exploring production options?
-            Send a short message and we’ll respond by email, usually within one working day.
+            Send us a short message and we&apos;ll respond by email, usually
+            within one working day.
           </p>
           <p className="mt-3 text-xs text-slate-400">
             Prefer to read first?{" "}
@@ -311,6 +337,10 @@ export default function HomePage() {
               placeholder="Tell us briefly about your device, volumes and timelines."
             />
           </div>
+
+          <Suspense fallback={null}>
+            <EnquiryAlert />
+          </Suspense>
 
           <button
             type="submit"
