@@ -44,7 +44,7 @@ export default function HomePage() {
   return (
     <div className="bg-[#020617]">
       {/* ===== Hero ===== */}
-      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-10 pt-10 md:flex-row md:items-center md:pt-14">
+      <section className="mx-auto flex max-w-6xl flex-col gap-10 pb-10 pt-6 md:flex-row md:items-center md:pt-10">
         {/* Left */}
         <div className="flex-1">
           <h1 className="text-4xl font-semibold leading-tight text-white md:text-5xl">
@@ -59,32 +59,32 @@ export default function HomePage() {
             production.
           </p>
 
-          {/* ✅ Hero CTAs: keep clean (no material parameters button) */}
-          <div className="mt-7 flex flex-wrap gap-4">
+          {/* ✅ Hero CTAs: all inline on desktop */}
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap md:flex-nowrap">
             <Link
               href="/upload"
-              className="rounded-full bg-[#0f6fff] px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#1d72ff]"
+              className="whitespace-nowrap rounded-full bg-[#0f6fff] px-6 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#1d72ff] text-center"
             >
               Upload &amp; request a quote
             </Link>
 
             <Link
               href="/portal"
-              className="rounded-full border border-slate-500 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-300"
+              className="whitespace-nowrap rounded-full border border-slate-500 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-300 text-center"
             >
               View my orders
             </Link>
 
-            {/* ✅ NDA button back */}
+            {/* ✅ Rename + keep inline */}
             <Link
               href="/nda"
-              className="rounded-full border border-slate-700 bg-slate-900/40 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-400"
+              className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-900/40 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-400 text-center"
             >
-              NDA / confidentiality
+              Request NDA
             </Link>
           </div>
 
-          {/* ✅ Material parameters link (NOT a hero button) */}
+          {/* Material parameters link (kept subtle) */}
           <p className="mt-3 text-xs text-slate-400">
             Comparing materials (PMMA vs PC vs COC/COP vs 3D print)?{" "}
             <Link
@@ -96,7 +96,7 @@ export default function HomePage() {
             .
           </p>
 
-          {/* ✅ 4 key points (with green ticks) */}
+          {/* 4 key points */}
           <div className="mt-6 grid max-w-xl gap-3 text-sm">
             <div className="flex items-start gap-3">
               <GreenTick />
@@ -117,7 +117,9 @@ export default function HomePage() {
             <div className="flex items-start gap-3">
               <GreenTick />
               <p className="text-slate-300">
-                <span className="font-semibold text-white">Secure NDA workflow</span>{" "}
+                <span className="font-semibold text-white">
+                  Secure NDA workflow
+                </span>{" "}
                 – sign and submit with email confirmation.
               </p>
             </div>
@@ -126,8 +128,8 @@ export default function HomePage() {
               <GreenTick />
               <p className="text-slate-300">
                 <span className="font-semibold text-white">Bonding ready</span> –{" "}
-                thermal bonding methods which do not introduce chemical contamination
-                or crazing of the channels.
+                thermal bonding methods which do not introduce chemical
+                contamination or crazing of the channels.
               </p>
             </div>
           </div>
@@ -165,7 +167,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== How it works (with arrows) ===== */}
-      <section id="how-it-works" className="mx-auto max-w-6xl px-6 pb-16">
+      <section id="how-it-works" className="mx-auto max-w-6xl pb-12">
         <div className="flex flex-col gap-4 md:flex-row md:items-stretch">
           <div className="flex-1 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
             <h3 className="text-sm font-semibold text-white">
@@ -203,54 +205,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== Volume, materials, routes ===== */}
-      <section id="processes" className="mx-auto max-w-6xl space-y-4 px-6 pb-16">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h4 className="text-xs font-semibold tracking-wide text-slate-400">
-            VOLUME RANGE
-          </h4>
-          <p className="mt-2 text-sm font-medium text-white">1–100k+ units</p>
-          <p className="mt-1 text-xs text-slate-300">
-            From first articles and pilot runs through to scale-up and recurring
-            production.
-          </p>
-        </div>
+      {/* ✅ COMPACT: Volume / Materials / Routes (sleeker, less vertical space) */}
+      <section id="processes" className="mx-auto max-w-6xl pb-14">
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/55 p-5">
+            <div className="text-[12px] font-extrabold tracking-wider text-slate-300">
+              VOLUME RANGE
+            </div>
+            <div className="mt-2 text-lg font-semibold text-white">
+              1–100k+ units
+            </div>
+            <div className="mt-1 text-sm text-slate-300">
+              First articles → pilots → scale-up → recurring production.
+            </div>
+          </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h4 className="text-xs font-semibold tracking-wide text-slate-400">
-            MATERIALS (INCLUDING MOULD-READY OPTIONS)
-          </h4>
-          <p className="mt-2 text-sm font-medium text-white">
-            COC · COP · polycarbonate · PMMA
-          </p>
-          <p className="mt-1 text-xs text-slate-300">
-            Want a quick comparison?{" "}
-            <Link
-              href="/resources#material-parameters"
-              className="text-[#0f6fff] hover:underline"
-            >
-              See material parameters
-            </Link>
-            .
-          </p>
-        </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/55 p-5">
+            <div className="text-[12px] font-extrabold tracking-wider text-slate-300">
+              MATERIALS
+            </div>
+            <div className="mt-2 text-lg font-semibold text-white">
+              COC · COP · PC · PMMA
+            </div>
+            <div className="mt-1 text-sm text-slate-300">
+              Mould-ready options for scale-up.{" "}
+              <Link
+                href="/resources#material-parameters"
+                className="text-[#0f6fff] hover:underline"
+              >
+                See material parameters
+              </Link>
+              .
+            </div>
+          </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-          <h4 className="text-xs font-semibold tracking-wide text-slate-400">
-            MANUFACTURING ROUTES
-          </h4>
-          <p className="mt-2 text-sm font-medium text-white">
-            3D print · CNC · mould
-          </p>
-          <p className="mt-1 text-xs text-slate-300">
-            We match your design to the most appropriate route for cost and
-            performance.
-          </p>
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/55 p-5">
+            <div className="text-[12px] font-extrabold tracking-wider text-slate-300">
+              ROUTES
+            </div>
+            <div className="mt-2 text-lg font-semibold text-white">
+              3D print · CNC · mould
+            </div>
+            <div className="mt-1 text-sm text-slate-300">
+              We match your design to the best route for cost + performance.
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ===== Confidentiality ===== */}
-      <section id="confidentiality" className="mx-auto max-w-6xl px-6 pb-12">
+      <section id="confidentiality" className="mx-auto max-w-6xl pb-12">
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
           <h2 className="text-base font-semibold text-white">
             Confidential by design
@@ -269,7 +273,7 @@ export default function HomePage() {
       {/* ===== Contact ===== */}
       <section
         id="contact"
-        className="mx-auto max-w-6xl grid gap-6 px-6 pb-20 md:grid-cols-[1.1fr_minmax(0,1fr)]"
+        className="mx-auto max-w-6xl grid gap-6 pb-20 md:grid-cols-[1.1fr_minmax(0,1fr)]"
       >
         <div>
           <h2 className="text-base font-semibold text-white">
