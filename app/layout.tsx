@@ -1,38 +1,42 @@
-import "./globals.css";
+import type { Metadata } from "next";
 import Link from "next/link";
+import "./globals.css";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "One Stop Microfluidics Shop",
-  description:
-    "Microfluidic manufacturing across 3D printing, CNC machining, bonding/sealing, and injection moulding.",
+  description: "Microfluidic manufacturing through a single portal.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#020617] text-slate-100">
+      {/* Force dark UI without touching globals.css */}
+      <body className="min-h-screen bg-[#020617] text-slate-100 antialiased">
         {/* Header */}
-        <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-[#020617]/80 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl items-center gap-6 px-6 py-4">
-            {/* Logo */}
+        <header className="sticky top-0 z-50 border-b border-slate-800/50 bg-gradient-to-r from-[#020617] via-[#06142a] to-[#020617]/90 backdrop-blur">
+          <div className="mx-auto flex h-20 max-w-7xl items-center justify-between gap-6 px-6">
+            {/* Brand */}
             <Link href="/" className="flex items-center gap-4">
-              <div className="flex h-12 w-20 items-center justify-center rounded-2xl bg-[#4ea6e6] text-lg font-bold text-white">
-                OSMS
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#4aa3ff] shadow-sm">
+                <span className="text-xl font-extrabold text-white tracking-wide">
+                  OSMS
+                </span>
               </div>
+
               <div className="leading-tight">
-                <div className="text-base font-semibold text-white">
+                <div className="text-lg font-semibold text-white">
                   One Stop Microfluidics Shop
                 </div>
                 <div className="text-sm text-slate-400">Powered by GB-Tech</div>
               </div>
             </Link>
 
-            {/* Nav */}
-            <nav className="ml-2 hidden items-center gap-8 text-base font-semibold text-slate-200 md:flex">
+            {/* Nav (desktop) */}
+            <nav className="hidden lg:flex items-center gap-10 text-sm font-semibold text-slate-200">
               <Link href="/#how-it-works" className="hover:text-white">
                 How it works
               </Link>
@@ -50,17 +54,18 @@ export default function RootLayout({
               </Link>
             </nav>
 
-            {/* Right buttons */}
-            <div className="ml-auto flex items-center gap-3">
+            {/* Actions */}
+            <div className="flex items-center gap-3">
               <Link
                 href="/portal"
-                className="rounded-full border border-slate-500 px-5 py-2 text-sm font-semibold text-slate-100 hover:border-slate-300"
+                className="whitespace-nowrap rounded-full border border-slate-500/70 bg-transparent px-4 py-2 text-sm font-semibold leading-none text-slate-100 hover:border-slate-300"
               >
                 View my orders
               </Link>
+
               <Link
                 href="/upload"
-                className="rounded-full bg-[#4ea6e6] px-5 py-2 text-sm font-semibold text-white hover:opacity-95"
+                className="whitespace-nowrap rounded-full bg-[#4aa3ff] px-5 py-2 text-sm font-semibold leading-none text-white shadow hover:bg-[#1d72ff]"
               >
                 Upload Design
               </Link>
