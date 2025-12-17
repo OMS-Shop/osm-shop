@@ -21,7 +21,7 @@ export default function RootLayout({
             {/* Brand (do NOT allow shrink/squash) */}
             <Link href="/" className="flex flex-shrink-0 items-center gap-4">
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-[#4aa3ff] shadow-sm">
-                <span className="text-2xl font-extrabold text-white tracking-wide">
+                <span className="text-xl font-extrabold text-white tracking-wide">
                   OSMS
                 </span>
               </div>
