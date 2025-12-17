@@ -26,7 +26,7 @@ function ArrowRight() {
     <div className="hidden items-center justify-center md:flex">
       <svg
         viewBox="0 0 24 24"
-        className="h-8 w-8 text-white/80"
+        className="h-8 w-8 text-white/70"
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
@@ -59,7 +59,7 @@ export default function HomePage() {
             production.
           </p>
 
-          {/* ✅ Hero CTAs: all inline on desktop */}
+          {/* Hero CTAs */}
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap md:flex-nowrap">
             <Link
               href="/upload"
@@ -75,7 +75,6 @@ export default function HomePage() {
               View my orders
             </Link>
 
-            {/* ✅ Rename + keep inline */}
             <Link
               href="/nda"
               className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-900/40 px-6 py-2.5 text-sm font-medium text-slate-100 hover:border-slate-400 text-center"
@@ -84,7 +83,6 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Material parameters link (kept subtle) */}
           <p className="mt-3 text-xs text-slate-400">
             Comparing materials (PMMA vs PC vs COC/COP vs 3D print)?{" "}
             <Link
@@ -166,53 +164,92 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== How it works (with arrows) ===== */}
+      {/* ===== How it works (centered + glow) ===== */}
       <section id="how-it-works" className="mx-auto max-w-6xl pb-12">
-        <div className="flex flex-col gap-4 md:flex-row md:items-stretch">
-          <div className="flex-1 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-            <h3 className="text-sm font-semibold text-white">
-              1. Upload your design
-            </h3>
-            <p className="mt-3 text-xs text-slate-300">
-              Send us your design once. Tell us your target volumes, materials
-              and timelines.
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-white">How it works</h2>
+            <p className="mt-2 text-sm text-slate-300">
+              A simple workflow designed to reduce back-and-forth and get you to
+              parts quickly.
             </p>
+          </div>
+
+          <Link
+            href="/upload"
+            className="hidden rounded-full border border-slate-500 px-5 py-2 text-sm font-semibold text-slate-100 hover:border-slate-200 hover:text-white transition-colors md:inline-flex"
+          >
+            Start an RFQ
+          </Link>
+        </div>
+
+        <div className="mt-6 flex flex-col items-stretch gap-4 md:flex-row md:items-center md:gap-6">
+          {/* Card 1 */}
+          <div className="relative flex-1">
+            {/* Glow */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#0f6fff]/35 via-emerald-400/10 to-transparent blur-xl opacity-60"
+            />
+            <div className="relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <h3 className="text-sm font-semibold text-white">
+                1. Upload your design
+              </h3>
+              <p className="mt-3 text-sm text-slate-300">
+                Send us your design once. Tell us your target volumes, materials
+                and timelines.
+              </p>
+            </div>
           </div>
 
           <ArrowRight />
 
-          <div className="flex-1 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-            <h3 className="text-sm font-semibold text-white">
-              2. We prepare a quote
-            </h3>
-            <p className="mt-3 text-xs text-slate-300">
-              We check feasibility, confirm assumptions, and send a detailed
-              quote by email.
-            </p>
+          {/* Card 2 */}
+          <div className="relative flex-1">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#0f6fff]/30 via-emerald-400/10 to-transparent blur-xl opacity-55"
+            />
+            <div className="relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <h3 className="text-sm font-semibold text-white">
+                2. We prepare a quote
+              </h3>
+              <p className="mt-3 text-sm text-slate-300">
+                We check feasibility, confirm assumptions, and send a detailed
+                quote by email.
+              </p>
+            </div>
           </div>
 
           <ArrowRight />
 
-          <div className="flex-1 rounded-xl border border-slate-800 bg-slate-900/60 p-5">
-            <h3 className="text-sm font-semibold text-white">
-              3. Manufacture &amp; delivery
-            </h3>
-            <p className="mt-3 text-xs text-slate-300">
-              Once agreed, we manufacture and keep you updated through the
-              portal.
-            </p>
+          {/* Card 3 */}
+          <div className="relative flex-1">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#0f6fff]/25 via-emerald-400/10 to-transparent blur-xl opacity-50"
+            />
+            <div className="relative rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <h3 className="text-sm font-semibold text-white">
+                3. Manufacture &amp; delivery
+              </h3>
+              <p className="mt-3 text-sm text-slate-300">
+                Once agreed, we manufacture and keep you updated through the
+                portal.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ✅ COMPACT: Volume / Materials / Routes (sleeker, less vertical space) */}
+      {/* ===== Compact trio cards: smaller text ===== */}
       <section id="processes" className="mx-auto max-w-6xl pb-14">
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-800 bg-slate-900/55 p-5">
             <div className="text-[12px] font-extrabold tracking-wider text-slate-300">
               VOLUME RANGE
             </div>
-            <div className="mt-2 text-lg font-semibold text-white">
+            <div className="mt-2 text-base font-semibold text-white">
               1–100k+ units
             </div>
             <div className="mt-1 text-sm text-slate-300">
@@ -224,7 +261,7 @@ export default function HomePage() {
             <div className="text-[12px] font-extrabold tracking-wider text-slate-300">
               MATERIALS
             </div>
-            <div className="mt-2 text-lg font-semibold text-white">
+            <div className="mt-2 text-base font-semibold text-white">
               COC · COP · PC · PMMA
             </div>
             <div className="mt-1 text-sm text-slate-300">
@@ -243,7 +280,7 @@ export default function HomePage() {
             <div className="text-[12px] font-extrabold tracking-wider text-slate-300">
               ROUTES
             </div>
-            <div className="mt-2 text-lg font-semibold text-white">
+            <div className="mt-2 text-base font-semibold text-white">
               3D print · CNC · mould
             </div>
             <div className="mt-1 text-sm text-slate-300">
@@ -255,11 +292,11 @@ export default function HomePage() {
 
       {/* ===== Confidentiality ===== */}
       <section id="confidentiality" className="mx-auto max-w-6xl pb-12">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
           <h2 className="text-base font-semibold text-white">
             Confidential by design
           </h2>
-          <p className="mt-3 max-w-3xl text-xs text-slate-300">
+          <p className="mt-3 max-w-3xl text-sm text-slate-300">
             Your designs and data are handled under strict confidentiality.{" "}
             <Link href="/nda" className="text-[#0f6fff] hover:underline">
               NDAs are available on request
@@ -279,12 +316,12 @@ export default function HomePage() {
           <h2 className="text-base font-semibold text-white">
             Talk to us about your next run
           </h2>
-          <p className="mt-3 max-w-xl text-xs text-slate-300">
+          <p className="mt-3 max-w-xl text-sm text-slate-300">
             Not sure if your design is ready, or exploring production options?
             Send us a short message and we&apos;ll respond by email, usually
             within one working day.
           </p>
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-3 text-sm text-slate-400">
             Prefer to read first?{" "}
             <Link
               href="/resources#material-parameters"
@@ -299,9 +336,9 @@ export default function HomePage() {
         <form
           action="/api/contact"
           method="post"
-          className="space-y-3 rounded-xl border border-slate-800 bg-slate-900/60 p-5"
+          className="space-y-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
         >
-          <div className="space-y-1 text-xs">
+          <div className="space-y-1 text-sm">
             <label className="block text-slate-300" htmlFor="name">
               Your name
             </label>
@@ -309,12 +346,12 @@ export default function HomePage() {
               id="name"
               name="name"
               type="text"
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#0f6fff]"
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-[#0f6fff]"
               placeholder="e.g. Jane Doe"
             />
           </div>
 
-          <div className="space-y-1 text-xs">
+          <div className="space-y-1 text-sm">
             <label className="block text-slate-300" htmlFor="email">
               Email address
             </label>
@@ -323,12 +360,12 @@ export default function HomePage() {
               name="email"
               type="email"
               required
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#0f6fff]"
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-[#0f6fff]"
               placeholder="you@company.com"
             />
           </div>
 
-          <div className="space-y-1 text-xs">
+          <div className="space-y-1 text-sm">
             <label className="block text-slate-300" htmlFor="message">
               Message
             </label>
@@ -337,7 +374,7 @@ export default function HomePage() {
               name="message"
               rows={3}
               required
-              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 outline-none focus:border-[#0f6fff]"
+              className="w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-[#0f6fff]"
               placeholder="Tell us briefly about your device, volumes and timelines."
             />
           </div>
