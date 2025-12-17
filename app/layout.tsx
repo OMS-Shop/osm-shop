@@ -14,10 +14,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#020617] text-slate-50">
-        {/* ===== Header (wider + cleaner) ===== */}
         <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-[#020617]/80 backdrop-blur">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4">
-            {/* Brand */}
             <Link href="/" className="flex items-center gap-4">
               <div className="flex h-12 w-20 items-center justify-center rounded-2xl bg-[#57a9e8] font-bold text-white">
                 OSMS
@@ -30,12 +28,11 @@ export default function RootLayout({
               </div>
             </Link>
 
-            {/* Nav */}
             <nav className="hidden items-center gap-8 text-[15px] font-semibold text-slate-200 md:flex">
               <a href="/#how-it-works" className="hover:text-white">
                 How it works
               </a>
-              <a href="/#processes" 아래 className="hover:text-white">
+              <a href="/#processes" className="hover:text-white">
                 Processes &amp; volumes
               </a>
               <Link href="/resources" className="hover:text-white">
@@ -49,7 +46,6 @@ export default function RootLayout({
               </a>
             </nav>
 
-            {/* Actions */}
             <div className="flex items-center gap-3">
               <Link
                 href="/portal"
@@ -67,7 +63,6 @@ export default function RootLayout({
           </div>
         </header>
 
-        {/* Pages render full-width; each page controls its own sections */}
         <main className="bg-[#020617]">{children}</main>
       </body>
     </html>
