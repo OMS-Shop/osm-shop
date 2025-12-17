@@ -84,25 +84,24 @@ export default function RootLayout({
                 </Link>
               </nav>
 
-              {/* Right buttons (no wrapping) */}
+              {/* Right buttons (slightly narrower) */}
               <div className="ml-auto flex items-center gap-3 shrink-0">
                 <Link
                   href="/portal"
-                  className="rounded-full border border-slate-500 px-5 py-2 text-sm font-semibold text-slate-100 hover:border-slate-200 hover:text-white transition-colors whitespace-nowrap"
+                  className="rounded-full border border-slate-500 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-slate-200 hover:text-white transition-colors whitespace-nowrap"
                 >
                   View my orders
                 </Link>
                 <Link
                   href="/upload"
-                  className="rounded-full bg-[#0ea5e9] px-6 py-2.5 text-sm font-extrabold text-white shadow hover:bg-[#0284c7] transition-colors whitespace-nowrap"
+                  className="rounded-full bg-[#0ea5e9] px-5 py-2.5 text-sm font-extrabold text-white shadow hover:bg-[#0284c7] transition-colors whitespace-nowrap"
                 >
-                  Upload &amp; request a quote
+                  Upload Design
                 </Link>
               </div>
             </div>
           </header>
 
-          {/* IMPORTANT: do NOT add max-width/padding here (pages control their own layout) */}
           <main>{children}</main>
         </div>
       </body>
