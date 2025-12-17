@@ -1,6 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
 
+/**
+ * ========================= GUARDRAILS (DO NOT REMOVE) =========================
+ * This file is the HOME/LANDING page.
+ *
+ * 1) DO NOT delete or rename these anchor IDs (header links depend on them):
+ *    - #how-it-works
+ *    - #processes
+ *    - #confidentiality
+ *    - #contact
+ *
+ * 2) If you do a “clean replace”, keep these sections present:
+ *    - How it works section
+ *    - Processes & volumes section
+ *    - Confidentiality section
+ *    - Contact section
+ *
+ * 3) Hero layout rule:
+ *    - If you adjust hero spacing, DO NOT change the layout/spacing of sections below.
+ *    - Only tweak the hero container/grid/card classes.
+ * ============================================================================
+ */
+
 type PageProps = {
   searchParams?: Record<string, string | string[] | undefined>;
 };
@@ -60,7 +82,8 @@ export default function HomePage({ searchParams }: PageProps) {
 
       {/* ================= HERO ================= */}
       <section className="relative mx-auto max-w-7xl px-8 pb-14 pt-10 md:pt-14">
-        <div className="grid gap-10 lg:grid-cols-[1.05fr_minmax(0,1fr)] lg:items-center">
+        {/* NOTE: changed lg:items-center -> lg:items-start to lift hero image up */}
+        <div className="grid gap-10 lg:grid-cols-[1.05fr_minmax(0,1fr)] lg:items-start">
           {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/5 px-4 py-1.5 text-xs text-slate-200">
@@ -176,7 +199,7 @@ export default function HomePage({ searchParams }: PageProps) {
           </div>
 
           {/* Right image card */}
-          <div className="relative">
+          <div className="relative lg:self-start">
             <div className="overflow-hidden rounded-[28px] border border-slate-700/60 bg-slate-900/60 shadow-[0_0_80px_rgba(59,130,246,0.12)]">
               <div className="relative aspect-[4/3]">
                 <Image
