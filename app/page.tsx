@@ -78,11 +78,9 @@ export default function HomePage() {
             </div>
 
             <h1 className="mt-7 text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl">
-              From{" "}
-              <span className="text-[#4d86ff]">1</span>{" "}
-              to{" "}
-              <span className="text-[#4d86ff]">100,000+</span>{" "}
-              units of microfluidic parts — through one portal
+              From <span className="text-[#4d86ff]">1</span> to{" "}
+              <span className="text-[#4d86ff]">100,000+</span> units of microfluidic parts — through
+              one portal
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-slate-300">
@@ -91,7 +89,7 @@ export default function HomePage() {
               prototypes through to volume production.
             </p>
 
-            {/* Buttons row (keep inline on desktop) */}
+            {/* Buttons row */}
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 href="/upload"
@@ -122,7 +120,7 @@ export default function HomePage() {
               </Link>
             </p>
 
-            {/* Hero bullets with green ticks */}
+            {/* Hero bullets */}
             <div className="mt-7 grid gap-5 md:grid-cols-2">
               <div className="flex gap-3">
                 <GreenTick />
@@ -235,12 +233,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== PROCESSES & VOLUMES (TITLE + CARDS) ===== */}
+      {/* ===== PROCESSES & VOLUMES ===== */}
       <section id="processes" className="relative mx-auto max-w-7xl px-6 pb-10 pt-8">
-        {/* ✅ This is the missing title you asked for */}
         <h2 className="text-3xl font-semibold tracking-tight">Processes &amp; volumes</h2>
         <p className="mt-2 max-w-3xl text-base text-slate-300">
-          Prototype to production: we match your design to the best route for cost, performance and scale-up.
+          Prototype to production: we match your design to the best route for cost, performance and
+          scale-up.
         </p>
 
         <div className="mt-7 grid gap-4 lg:grid-cols-3">
@@ -273,28 +271,47 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== CONFIDENTIALITY (keep on main page) ===== */}
+      {/* ===== CONFIDENTIALITY (beefed up) ===== */}
       <section id="confidentiality" className="relative mx-auto max-w-7xl px-6 pb-10">
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_0_120px_rgba(15,111,255,0.10)]">
           <h2 className="text-xl font-semibold">Confidential by design</h2>
+
           <p className="mt-3 text-sm leading-relaxed text-slate-300">
-            Your designs and data are handled under strict confidentiality.{" "}
+            We treat designs, drawings and specifications as confidential from day one.{" "}
             <Link href="/nda" className="text-[#4d86ff] hover:underline">
-              NDAs are available on request
+              Request an NDA
             </Link>{" "}
-            and we only share the minimum technical detail required for manufacture internally.
+            any time — and we only share the minimum technical detail required to manufacture your
+            parts.
           </p>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="flex gap-3">
+              <GreenTick className="h-6 w-6" />
+              <p className="text-sm text-slate-300">
+                Controlled internal access — only the people needed to quote &amp; deliver see your
+                files.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <GreenTick className="h-6 w-6" />
+              <p className="text-sm text-slate-300">
+                Clear audit trail — RFQs and NDA submissions are confirmed by email.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ===== CONTACT (keep enquiry success banner) ===== */}
+      {/* ===== CONTACT ===== */}
       <section id="contact" className="relative mx-auto max-w-7xl px-6 pb-16">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_minmax(0,1fr)] lg:items-start">
           <div>
-            <h2 className="text-2xl font-semibold">Talk to us about your next run</h2>
+            {/* ✅ Changed as requested */}
+            <h2 className="text-2xl font-semibold">Get in Touch</h2>
             <p className="mt-3 max-w-xl text-sm text-slate-300">
-              Not sure if your design is ready, or exploring production options? Send a short message and
-              we&apos;ll respond by email, usually within one working day.
+              Not sure if your design is ready, or exploring production options? Send a short message
+              and we&apos;ll respond by email, usually within one working day.
             </p>
           </div>
 
@@ -344,7 +361,6 @@ export default function HomePage() {
               />
             </div>
 
-            {/* Success/error banner (client-side, wrapped in Suspense) */}
             <Suspense fallback={null}>
               <EnquiryAlert />
             </Suspense>
