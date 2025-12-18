@@ -160,7 +160,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== How it works ===== */}
-      <section id="how-it-works" className="mx-auto max-w-7xl px-6 pb-10 pt-6">
+      <section id="how-it-works" className="scroll-mt-24 mx-auto max-w-7xl px-6 pb-10 pt-6">
         <div className="flex items-start justify-between gap-6">
           <div>
             <h2 className="text-2xl font-semibold text-white">How it works</h2>
@@ -210,7 +210,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== Processes & volumes ===== */}
-      <section id="processes" className="mx-auto max-w-7xl px-6 pb-10 pt-4">
+      <section id="processes" className="scroll-mt-24 mx-auto max-w-7xl px-6 pb-10 pt-4">
         <h2 className="text-2xl font-semibold text-white">Processes &amp; volumes</h2>
         <p className="mt-2 max-w-2xl text-slate-300">
           Built for prototype-to-production — with mould-ready thermoplastics available for scale-up.
@@ -248,7 +248,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== Confidentiality ===== */}
-      <section id="confidentiality" className="mx-auto max-w-7xl px-6 pb-10 pt-2">
+      <section id="confidentiality" className="scroll-mt-24 mx-auto max-w-7xl px-6 pb-10 pt-2">
         <div className="rounded-2xl border border-slate-800 bg-slate-900/45 p-7">
           <h2 className="text-xl font-semibold text-white">Confidential by design</h2>
           <p className="mt-3 text-slate-300">
@@ -276,7 +276,7 @@ export default function HomePage() {
       </section>
 
       {/* ===== Contact ===== */}
-      <section id="contact" className="mx-auto max-w-7xl px-6 pb-20 pt-2">
+      <section id="contact" className="scroll-mt-24 mx-auto max-w-7xl px-6 pb-20 pt-2">
         <div className="grid gap-8 md:grid-cols-[1.05fr_minmax(0,1fr)]">
           <div>
             <h2 className="text-3xl font-semibold text-white">Get in Touch</h2>
