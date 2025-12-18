@@ -31,7 +31,7 @@ function GreenTick() {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#020617]">
+    <div className="min-h-screen bg-[#081b3d]">
       {/* ===== Hero ===== */}
       <section className="relative overflow-hidden">
         {/* ambient background */}
