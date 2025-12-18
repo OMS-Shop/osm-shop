@@ -60,17 +60,6 @@ const rows: {
     },
   },
   {
-    label: "Surface behaviour",
-    hint: "Wettability / adsorption tendencies (often tuned by treatment/coatings)",
-    values: {
-      coc: "Varies",
-      cop: "Varies",
-      pc: "Varies",
-      pmma: "Varies",
-      resin: "Varies",
-    },
-  },
-  {
     label: "Bonding / sealing compatibility",
     hint: "Preference for thermal bonding methods which do not introduce chemical contamination or crazing of the channels",
     values: {
