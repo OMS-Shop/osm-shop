@@ -1,298 +1,225 @@
 import Link from "next/link";
 
-function GoodIcon() {
-  return (
-    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/25">
-      <svg
-        viewBox="0 0 24 24"
-        className="h-4 w-4 text-emerald-300"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20 6L9 17l-5-5" />
-      </svg>
-    </span>
-  );
-}
+type Cell = "Excellent" | "Good" | "Fair" | "Poor" | "Varies";
 
-function DependsIcon() {
-  return (
-    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-500/15 ring-1 ring-amber-500/25">
-      <svg
-        viewBox="0 0 24 24"
-        className="h-4 w-4 text-amber-300"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      >
-        <path d="M6 12h12" />
-      </svg>
-    </span>
-  );
-}
+const materials = [
+  { key: "coc", name: "COC", note: "mould-ready" },
+  { key: "cop", name: "COP", note: "mould-ready" },
+  { key: "pc", name: "Polycarbonate (PC)", note: "mould-ready" },
+  { key: "pmma", name: "PMMA", note: "mould-ready" },
+  { key: "resin", name: "3D-printed resin", note: "prototype-friendly" },
+] as const;
 
-function LimitedIcon() {
+const rows: {
+  label: string;
+  hint?: string;
+  values: Record<(typeof materials)[number]["key"], Cell | string>;
+}[] = [
+  {
+    label: "Mould-ready for scale-up",
+    hint: "Suitability for injection moulding once the design is stable",
+    values: {
+      coc: "Excellent",
+      cop: "Excellent",
+      pc: "Excellent",
+      pmma: "Good",
+      resin: "Poor",
+    },
+  },
+  {
+    label: "Optical transparency",
+    hint: "Typical clarity in visible range (depends on grade/thickness)",
+    values: {
+      coc: "Excellent",
+      cop: "Excellent",
+      pc: "Good",
+      pmma: "Excellent",
+      resin: "Varies",
+    },
+  },
+  {
+    label: "Ethanol resistance",
+    hint: "Resistance to swelling/stress cracking (grade + exposure matter)",
+    values: {
+      coc: "Good",
+      cop: "Good",
+      pc: "Fair",
+      pmma: "Fair",
+      resin: "Varies",
+    },
+  },
+  {
+    label: "Acid / base resistance",
+    hint: "General resistance (strong acids/bases always need checking)",
+    values: {
+      coc: "Good",
+      cop: "Good",
+      pc: "Fair",
+      pmma: "Fair",
+      resin: "Varies",
+    },
+  },
+  {
+    label: "Surface behaviour",
+    hint: "Wettability / adsorption tendencies (often tuned by treatment/coatings)",
+    values: {
+      coc: "Varies",
+      cop: "Varies",
+      pc: "Varies",
+      pmma: "Varies",
+      resin: "Varies",
+    },
+  },
+  {
+    label: "Bonding / sealing compatibility",
+    hint: "Preference for thermal bonding methods which do not introduce chemical contamination or crazing of the channels",
+    values: {
+      coc: "Excellent",
+      cop: "Excellent",
+      pc: "Good",
+      pmma: "Good",
+      resin: "Varies",
+    },
+  },
+];
+
+function Badge({ value }: { value: Cell | string }) {
+  const v = String(value);
+
+  const cls =
+    v === "Excellent"
+      ? "bg-emerald-100 text-emerald-900 ring-1 ring-emerald-200"
+      : v === "Good"
+      ? "bg-green-100 text-green-900 ring-1 ring-green-200"
+      : v === "Fair"
+      ? "bg-amber-100 text-amber-900 ring-1 ring-amber-200"
+      : v === "Poor"
+      ? "bg-rose-100 text-rose-900 ring-1 ring-rose-200"
+      : "bg-slate-100 text-slate-900 ring-1 ring-slate-200";
+
   return (
-    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-rose-500/15 ring-1 ring-rose-500/25">
-      <svg
-        viewBox="0 0 24 24"
-        className="h-4 w-4 text-rose-300"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      >
-        <path d="M7 7l10 10" />
-        <path d="M17 7L7 17" />
-      </svg>
+    <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${cls}`}>
+      {v}
     </span>
   );
 }
 
 export default function ResourcesPage() {
   return (
-    <div className="bg-[#020617] text-slate-100">
-      <header className="mx-auto max-w-6xl px-6 pt-10">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <main className="bg-[#020617]">
+      {/* Top */}
+      <section className="mx-auto max-w-screen-xl px-6 pt-10 pb-8">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-semibold text-white md:text-4xl">
               Resources
             </h1>
-            <p className="mt-2 max-w-2xl text-sm text-slate-300">
-              Practical notes to help you choose materials and production routes
-              for microfluidic parts.
+            <p className="mt-2 max-w-3xl text-sm text-slate-300">
+              Helpful references for choosing processes and materials for microfluidic devices.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/"
-              className="rounded-full border border-slate-600 px-5 py-2 text-sm font-medium text-slate-100 hover:border-slate-300"
-            >
-              Back to homepage
-            </Link>
-            <Link
-              href="/upload"
-              className="rounded-full bg-[#0f6fff] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1d72ff]"
-            >
-              Upload &amp; request a quote
-            </Link>
-          </div>
+          <Link
+            href="/upload"
+            className="rounded-full bg-[#4aa3ff] px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#1d72ff]"
+          >
+            Upload Design
+          </Link>
         </div>
-      </header>
+      </section>
 
       {/* Material parameters */}
       <section
         id="material-parameters"
-        className="mx-auto max-w-6xl px-6 pb-16 pt-10"
+        className="mx-auto max-w-screen-xl px-6 pb-16 pt-6"
       >
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/45 p-6">
+          {/* Bigger title as requested */}
+          <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="text-base font-semibold text-white">
+              <h2 className="text-3xl font-semibold text-white md:text-4xl">
                 Material parameters
               </h2>
               <p className="mt-2 max-w-3xl text-sm text-slate-300">
-                3D printing is excellent for early prototypes, but most teams
-                move to{" "}
-                <span className="font-semibold text-white">COC</span> /{" "}
-                <span className="font-semibold text-white">COP</span> /{" "}
-                <span className="font-semibold text-white">PC</span> for better
-                chemical/thermal performance, optical behaviour, and a cleaner
-                path to injection moulding.{" "}
-                <span className="font-semibold text-white">
-                  COC is also mould-ready
-                </span>{" "}
-                and commonly selected for production scale-up.
+                A practical comparison of common microfluidics materials. COC/COP/PC/PMMA are
+                typically chosen when designs need to be mould-ready for scale-up, while 3D-printed
+                resins are often best for early prototypes.
               </p>
             </div>
+          </div>
 
-            <div className="flex flex-wrap gap-3 text-xs text-slate-300">
-              <div className="flex items-center gap-2">
-                <GoodIcon />
-                <span>Good</span>
+          {/* White table background preview + wider page to avoid scroll */}
+          <div className="mt-6 overflow-x-visible rounded-xl border border-slate-200 bg-white">
+            <div className="p-4">
+              <div className="w-full overflow-x-auto">
+                <table className="w-full table-fixed border-separate border-spacing-0 text-sm text-slate-900">
+                  {/* column widths to reduce wrapping / avoid scroll */}
+                  <colgroup>
+                    <col className="w-[26%]" />
+                    <col className="w-[14.8%]" />
+                    <col className="w-[14.8%]" />
+                    <col className="w-[14.8%]" />
+                    <col className="w-[14.8%]" />
+                    <col className="w-[14.8%]" />
+                  </colgroup>
+
+                  <thead>
+                    <tr>
+                      <th className="sticky left-0 z-10 bg-white px-4 py-3 text-left text-xs font-semibold text-slate-700">
+                        Parameter
+                      </th>
+                      {materials.map((m) => (
+                        <th
+                          key={m.key}
+                          className="px-3 py-3 text-center text-xs font-semibold text-slate-700"
+                        >
+                          <div className="whitespace-nowrap">{m.name}</div>
+                          <div className="mt-1 text-[11px] font-medium text-slate-500">
+                            {m.note}
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {rows.map((r) => (
+                      <tr key={r.label} className="align-top">
+                        <td className="sticky left-0 z-10 bg-white border-t border-slate-200 px-4 py-4">
+                          <div className="text-sm font-semibold text-slate-900">
+                            {r.label}
+                          </div>
+                          {r.hint ? (
+                            <div className="mt-1 text-xs text-slate-500">
+                              {r.hint}
+                            </div>
+                          ) : null}
+                        </td>
+
+                        {materials.map((m) => (
+                          <td
+                            key={m.key}
+                            className="border-t border-slate-200 px-3 py-4 text-center"
+                          >
+                            <div className="flex justify-center">
+                              <Badge value={r.values[m.key]} />
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <div className="flex items-center gap-2">
-                <DependsIcon />
-                <span>Depends</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <LimitedIcon />
-                <span>Limited</span>
-              </div>
+
+              <p className="mt-4 text-xs text-slate-500">
+                Notes: Ratings are indicative and depend on grade, additives, channel geometry, stress, and
+                exposure conditions. Always confirm with datasheets and end-use testing.
+              </p>
             </div>
           </div>
-
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-[1200px] w-full border-separate border-spacing-0">
-              <thead>
-                <tr className="text-left">
-                  <th className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-xs font-semibold tracking-wide text-slate-300">
-                    Key performance factors
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-300">
-                    3D Printed Resin
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-300">
-                    PMMA
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-300">
-                    PC
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-300">
-                    COC
-                  </th>
-                  <th className="px-4 py-3 text-xs font-semibold tracking-wide text-slate-300">
-                    COP
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="text-sm">
-                <tr className="border-t border-slate-800">
-                  <td className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-slate-100">
-                    <span className="font-medium">Biocompatibility</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <DependsIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                </tr>
-
-                <tr className="border-t border-slate-800">
-                  <td className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-slate-100">
-                    <span className="font-medium">Ethanol resistance</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <LimitedIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <DependsIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                </tr>
-
-                <tr className="border-t border-slate-800">
-                  <td className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-slate-100">
-                    <span className="font-medium">Acid &amp; base resistance</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <LimitedIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <DependsIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <DependsIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                </tr>
-
-                <tr className="border-t border-slate-800">
-                  <td className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-slate-100">
-                    <div className="flex flex-col">
-                      <span className="font-medium">
-                        Optical transparency (visible)
-                      </span>
-                      <span className="mt-1 text-xs text-slate-400">
-                        (clarity &amp; imaging)
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <DependsIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                  <td className="px-4 py-3">
-                    <GoodIcon />
-                  </td>
-                </tr>
-
-                <tr className="border-t border-slate-800">
-                  <td className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-slate-100 font-medium">
-                    Surface behaviour (typical)
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Often variable; post-cure / coatings needed
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Slightly hydrophilic (common)
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">Neutral</td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Neutral to slightly hydrophobic
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Neutral to slightly hydrophobic
-                  </td>
-                </tr>
-
-                <tr className="border-t border-slate-800">
-                  <td className="sticky left-0 z-10 bg-slate-900/40 px-4 py-3 text-slate-100 font-medium">
-                    Example use case
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Early form/fit tests &amp; fast iteration
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Fast prototypes &amp; quick iteration
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Handling robustness; broader thermal window
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Fluorescence-friendly; mould-ready scale-up
-                  </td>
-                  <td className="px-4 py-3 text-slate-200">
-                    Optical/fluorescence-heavy workflows; moulding-ready
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p className="mt-4 text-xs text-slate-400">
-            Notes: indicators are directional and can vary by supplier and grade.
-            We’ll recommend the best material for your application and route.
-          </p>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
