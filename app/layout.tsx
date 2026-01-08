@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+
 import GoogleAnalytics from "./components/GoogleAnalytics";
 
 export const metadata: Metadata = {
@@ -16,6 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#020617] text-slate-100 antialiased">
+        <GoogleAnalytics />
+
         <header className="sticky top-0 z-50 border-b border-slate-800/50 bg-gradient-to-r from-[#020617] via-[#06142a] to-[#020617]/90 backdrop-blur">
           {/* Wider container so the nav can stay single-line */}
           <div className="mx-auto flex h-20 max-w-screen-2xl items-center justify-between gap-6 px-6">
@@ -51,7 +54,10 @@ export default function RootLayout({
               >
                 Processes &amp; volumes
               </Link>
-              <Link href="/resources" className="whitespace-nowrap hover:text-white">
+              <Link
+                href="/resources"
+                className="whitespace-nowrap hover:text-white"
+              >
                 Resources
               </Link>
               <Link
@@ -60,20 +66,16 @@ export default function RootLayout({
               >
                 Confidentiality
               </Link>
-              <Link href="/#contact" className="whitespace-nowrap hover:text-white">
+              <Link
+                href="/#contact"
+                className="whitespace-nowrap hover:text-white"
+              >
                 Contact
               </Link>
             </nav>
 
             {/* Actions (no wrapping) */}
             <div className="flex flex-shrink-0 items-center gap-3">
-              <Link
-                href="/portal"
-                className="whitespace-nowrap rounded-full border border-slate-500/70 bg-transparent px-4 py-2 text-sm font-semibold leading-none text-slate-100 hover:border-slate-300"
-              >
-                View my orders
-              </Link>
-
               <Link
                 href="/upload"
                 className="whitespace-nowrap rounded-full bg-[#4aa3ff] px-5 py-2 text-sm font-semibold leading-none text-white shadow hover:bg-[#1d72ff]"
@@ -85,9 +87,6 @@ export default function RootLayout({
         </header>
 
         {children}
-
-        {/* ✅ GA4 */}
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       </body>
     </html>
   );
