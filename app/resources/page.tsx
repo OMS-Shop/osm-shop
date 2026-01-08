@@ -15,9 +15,21 @@ const rows: {
   hint?: string;
   values: Record<(typeof materials)[number]["key"], Cell | string>;
 }[] = [
+  // ✅ Biocompatibility moved to TOP row
+  {
+    label: "Biocompatibility",
+    hint: "General suitability for biological assays (always validate for your assay, cleaning and surface treatment).",
+    values: {
+      coc: "Excellent",
+      cop: "Excellent",
+      pc: "Good",
+      pmma: "Good",
+      resin: "Varies",
+    },
+  },
   {
     label: "Mould-ready for scale-up",
-    hint: "Suitability foår injection moulding once the design is stable",
+    hint: "Suitability for injection moulding once the design is stable",
     values: {
       coc: "Excellent",
       cop: "Excellent",
@@ -87,7 +99,9 @@ function Badge({ value }: { value: Cell | string }) {
       : "bg-slate-100 text-slate-900 ring-1 ring-slate-200";
 
   return (
-    <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${cls}`}>
+    <span
+      className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${cls}`}
+    >
       {v}
     </span>
   );
@@ -97,14 +111,15 @@ export default function ResourcesPage() {
   return (
     <main className="bg-[#020617]">
       {/* Top */}
-      <section className="mx-auto max-w-screen-xl px-6 pt-10 pb-8">
+      <section className="mx-auto max-w-screen-xl px-6 pb-8 pt-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-semibold text-white md:text-4xl">
               Resources
             </h1>
             <p className="mt-2 max-w-3xl text-sm text-slate-300">
-              Helpful references for choosing processes and materials for microfluidic devices.
+              Helpful references for choosing processes and materials for
+              microfluidic devices.
             </p>
           </div>
 
@@ -123,26 +138,25 @@ export default function ResourcesPage() {
         className="mx-auto max-w-screen-xl px-6 pb-16 pt-6"
       >
         <div className="rounded-2xl border border-slate-800 bg-slate-900/45 p-6">
-          {/* Bigger title as requested */}
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-3xl font-semibold text-white md:text-4xl">
                 Material parameters
               </h2>
               <p className="mt-2 max-w-3xl text-sm text-slate-300">
-                A practical comparison of common microfluidics materials. COC/COP/PC/PMMA are
-                typically chosen when designs need to be mould-ready for scale-up, while 3D-printed
-                resins are often best for early prototypes.
+                A practical comparison of common microfluidics materials.
+                COC/COP/PC/PMMA are typically chosen when designs need to be
+                mould-ready for scale-up, while 3D-printed resins are often best
+                for early prototypes.
               </p>
             </div>
           </div>
 
-          {/* White table background preview + wider page to avoid scroll */}
+          {/* White table background + wide layout to minimise horizontal scroll */}
           <div className="mt-6 overflow-x-visible rounded-xl border border-slate-200 bg-white">
             <div className="p-4">
               <div className="w-full overflow-x-auto">
                 <table className="w-full table-fixed border-separate border-spacing-0 text-sm text-slate-900">
-                  {/* column widths to reduce wrapping / avoid scroll */}
                   <colgroup>
                     <col className="w-[26%]" />
                     <col className="w-[14.8%]" />
@@ -174,7 +188,7 @@ export default function ResourcesPage() {
                   <tbody>
                     {rows.map((r) => (
                       <tr key={r.label} className="align-top">
-                        <td className="sticky left-0 z-10 bg-white border-t border-slate-200 px-4 py-4">
+                        <td className="sticky left-0 z-10 border-t border-slate-200 bg-white px-4 py-4">
                           <div className="text-sm font-semibold text-slate-900">
                             {r.label}
                           </div>
@@ -202,8 +216,9 @@ export default function ResourcesPage() {
               </div>
 
               <p className="mt-4 text-xs text-slate-500">
-                Notes: Ratings are indicative and depend on grade, additives, channel geometry, stress, and
-                exposure conditions. Always confirm with datasheets and end-use testing.
+                Notes: Ratings are indicative and depend on grade, additives,
+                channel geometry, stress, and exposure conditions. Always confirm
+                with datasheets and end-use testing.
               </p>
             </div>
           </div>
