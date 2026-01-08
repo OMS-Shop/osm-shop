@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-
 import GoogleAnalytics from "./components/GoogleAnalytics";
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export default function RootLayout({
             {/* Brand (do NOT allow shrink/squash) */}
             <Link href="/" className="flex flex-shrink-0 items-center gap-4">
               <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-[#4aa3ff] shadow-sm">
-                <span className="text-xl font-extrabold text-white tracking-wide">
+                <span className="text-xl font-extrabold tracking-wide text-white">
                   OSMS
                 </span>
               </div>
@@ -41,7 +40,7 @@ export default function RootLayout({
             </Link>
 
             {/* Nav (force single line per item) */}
-            <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-200">
+            <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-200 lg:flex">
               <Link
                 href="/#how-it-works"
                 className="whitespace-nowrap hover:text-white"
