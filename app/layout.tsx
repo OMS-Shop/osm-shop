@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "One Stop Microfluidics Shop",
@@ -38,16 +39,25 @@ export default function RootLayout({
 
             {/* Nav (force single line per item) */}
             <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-200">
-              <Link href="/#how-it-works" className="whitespace-nowrap hover:text-white">
+              <Link
+                href="/#how-it-works"
+                className="whitespace-nowrap hover:text-white"
+              >
                 How it works
               </Link>
-              <Link href="/#processes" className="whitespace-nowrap hover:text-white">
+              <Link
+                href="/#processes"
+                className="whitespace-nowrap hover:text-white"
+              >
                 Processes &amp; volumes
               </Link>
               <Link href="/resources" className="whitespace-nowrap hover:text-white">
                 Resources
               </Link>
-              <Link href="/#confidentiality" className="whitespace-nowrap hover:text-white">
+              <Link
+                href="/#confidentiality"
+                className="whitespace-nowrap hover:text-white"
+              >
                 Confidentiality
               </Link>
               <Link href="/#contact" className="whitespace-nowrap hover:text-white">
@@ -75,6 +85,9 @@ export default function RootLayout({
         </header>
 
         {children}
+
+        {/* ✅ GA4 */}
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
       </body>
     </html>
   );
