@@ -145,7 +145,7 @@ export default function HomePage() {
                 />
               </div>
 
-              <div className="border-t border-slate-700/60 bg-slate-900/70 px-7 py-5">
+              <div className="border-t border-slate-700/60 bg-[#0b234a]/65 px-7 py-5">
                 <p className="text-lg font-semibold text-white">
                   COC &amp; polycarbonate microfluidics
                 </p>

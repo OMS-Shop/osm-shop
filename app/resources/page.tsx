@@ -17,7 +17,7 @@ const rows: {
 }[] = [
   {
     label: "Mould-ready for scale-up",
-    hint: "Suitability for injection moulding once the design is stable",
+    hint: "Suitability foår injection moulding once the design is stable",
     values: {
       coc: "Excellent",
       cop: "Excellent",
