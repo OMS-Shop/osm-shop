@@ -87,12 +87,18 @@ export default function Header() {
           {/* Mobile burger */}
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 p-2 text-white lg:hidden"
+            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-slate-900 p-2 text-white hover:bg-slate-800 lg:hidden"
             aria-label="Open menu"
             aria-expanded={open}
             onClick={() => setOpen(true)}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
               <path
                 d="M4 7h16M4 12h16M4 17h16"
                 stroke="currentColor"
@@ -110,7 +116,7 @@ export default function Header() {
           {/* Overlay */}
           <button
             aria-label="Close menu"
-            className="fixed inset-0 z-50 bg-black/50"
+            className="fixed inset-0 z-50 bg-black/70"
             onClick={() => setOpen(false)}
           />
 
@@ -118,13 +124,20 @@ export default function Header() {
           <div className="fixed right-0 top-0 z-50 h-full w-[86%] max-w-sm border-l border-white/10 bg-[#020617] p-6 shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="text-sm font-semibold text-white">Menu</div>
+
               <button
                 type="button"
-                className="rounded-xl border border-white/10 bg-white/5 p-2 text-white"
+                className="rounded-xl border border-white/10 bg-slate-900 p-2 text-white hover:bg-slate-800"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
                   <path
                     d="M6 6l12 12M18 6L6 18"
                     stroke="currentColor"
@@ -140,7 +153,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10"
+                  className="rounded-xl border border-white/10 bg-slate-900 px-4 py-3 text-white hover:bg-slate-800"
                 >
                   {item.label}
                 </Link>
