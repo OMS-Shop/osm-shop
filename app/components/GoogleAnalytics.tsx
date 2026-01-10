@@ -19,11 +19,12 @@ export default function GoogleAnalytics() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${gaId}', { anonymize_ip: true, send_page_view: false });
+          gtag('config', '${gaId}', { anonymize_ip: true });
         `}
       </Script>
 
-      <GAPageView gaId={gaId} />
+      {/* Track SPA route changes */}
+      <GAPageView />
     </>
   );
 }
