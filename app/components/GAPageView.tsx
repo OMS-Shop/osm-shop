@@ -1,22 +1,31 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
-export default function GAPageView({ gaId }: { gaId: string }) {
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
+export default function GAPageView() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
+    const gaId = process.env.NEXT_PUBLIC_GA_ID;
     if (!gaId) return;
 
-    const qs = searchParams?.toString();
-    const page_path = qs ? `${pathname}?${qs}` : pathname;
+    // gtag is created by the GA script in GoogleAnalytics.tsx
+    if (typeof window.gtag !== "function") return;
 
-    // Send a GA4 page_view on client-side route changes
-    // @ts-ignore
-    window.gtag?.("event", "page_view", { page_path });
-  }, [pathname, searchParams, gaId]);
+    const page_path = `${pathname}${window.location.search || ""}`;
+
+    window.gtag("config", gaId, {
+      page_path,
+      anonymize_ip: true,
+    });
+  }, [pathname]);
 
   return null;
 }
