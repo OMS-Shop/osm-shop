@@ -8,7 +8,7 @@ type NavItem = { label: string; href: string };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "How it works", href: "/#how-it-works" },
-  { label: "Processes & volumes", href: "/#processes" },
+  { label: "Processes & Volumes", href: "/#processes" },
   { label: "Resources", href: "/resources" },
   { label: "Confidentiality", href: "/nda" }, // ✅ goes to NDA page
   { label: "Contact", href: "/#contact" },

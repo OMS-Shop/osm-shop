@@ -49,19 +49,19 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-3 rounded-full border border-emerald-700/20 bg-emerald-500/10 px-4 py-2 text-sm text-slate-800">
               <GreenTick />
               <span>
-                Upload &amp; request a quote • Response typically within 1 working
-                day
+                Upload &amp; request a quote • Response typically within 1
+                working day
               </span>
             </div>
 
             <h1 className="mt-7 text-5xl font-semibold leading-tight text-slate-900 md:text-6xl">
-              From <span className="text-[#1d72ff]">1 to 100,000+</span> units of
-              microfluidic parts — through one portal
+              From <span className="text-[#1d72ff]">1 to 100,000+</span>{" "}
+              Microfluidic Units: Managed Through One Portal
             </h1>
 
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-700">
               We coordinate microfluidic manufacturing across 3D printing, CNC
-              machining, bonding/sealing, and injection moulding. Upload once and
+              Machining, bonding/sealing, to scale with Injection Moulding. Upload once and
               we guide you from early prototypes through to volume production.
             </p>
 
@@ -71,7 +71,7 @@ export default function HomePage() {
                 href="/upload"
                 className="rounded-full bg-[#1d72ff] px-6 py-3 text-sm font-semibold text-white shadow hover:brightness-110"
               >
-                Upload design &amp; get started
+                Upload Design &amp; Get Started
               </Link>
 
               {/* Confidentiality button should go to /nda */}
@@ -79,12 +79,12 @@ export default function HomePage() {
                 href="/nda"
                 className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 hover:border-slate-400"
               >
-                Request NDA
+                Request to Sign an NDA
               </Link>
             </div>
 
             <p className="mt-4 text-sm text-slate-600">
-              Comparing materials (PMMA vs PC vs COC/COP vs 3D print)?{" "}
+              Comparing materials (COC/COP vs PC vs PMMA vs 3D printed resins)?{" "}
               <Link
                 href="/resources#material-parameters"
                 className="text-[#1d72ff] hover:underline"
@@ -100,9 +100,9 @@ export default function HomePage() {
                 <GreenTick />
                 <p className="text-base text-slate-800">
                   <span className="font-semibold text-slate-900">
-                    Single RFQ pack
+                    Single Design Upload (RFQ pack)
                   </span>{" "}
-                  — send files, quantities and key requirements once.
+                  — send files, quantities, material and key requirements once.
                 </p>
               </div>
 
@@ -120,9 +120,9 @@ export default function HomePage() {
                 <GreenTick />
                 <p className="text-base text-slate-800">
                   <span className="font-semibold text-slate-900">
-                    COC is mould-ready
+                    Thermoplastics are mould-ready
                   </span>{" "}
-                  and commonly selected for scale-up.
+                  and are selected for scale-up.
                 </p>
               </div>
 
@@ -133,7 +133,7 @@ export default function HomePage() {
                     Bonding ready
                   </span>{" "}
                   — thermal bonding methods which do not introduce chemical
-                  contamination or crazing of the channels.
+                  contamination or crazing of microfluidic channels.
                 </p>
               </div>
             </div>
@@ -159,11 +159,11 @@ export default function HomePage() {
 
               <div className="border-t border-slate-200 bg-white px-7 py-5">
                 <p className="text-lg font-semibold text-slate-900">
-                  COC &amp; polycarbonate microfluidics
+                  Thermoplastic Microfluidics (COC, COP, PC, PMMA)
                 </p>
                 <p className="mt-1 text-sm text-slate-600">
-                  Precision components for diagnostics, life-science and quantum
-                  devices — built for repeatability and scale-up.
+                  Precision components for diagnostics, life-science and agricultural sensors 
+                   — built for repeatability and scale-up.
                 </p>
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function HomePage() {
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <div>
             <h2 className="text-2xl font-semibold text-slate-900">
-              How it works
+              How it Works
             </h2>
             <p className="mt-2 max-w-2xl text-slate-700">
               A simple workflow designed to reduce back-and-forth and get you to
@@ -200,7 +200,7 @@ export default function HomePage() {
         <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr]">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-base font-semibold text-slate-900">
-              1. Upload your design
+              1. Upload your Design
             </p>
             <p className="mt-3 text-sm text-slate-600">
               Send CAD + a few key details (material, quantity, target date).
@@ -213,7 +213,7 @@ export default function HomePage() {
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-base font-semibold text-slate-900">
-              2. We prepare a quote
+              2. We Prepare a Quote
             </p>
             <p className="mt-3 text-sm text-slate-600">
               We run a quick DFM check and return a clear quote by email.
@@ -226,7 +226,7 @@ export default function HomePage() {
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-base font-semibold text-slate-900">
-              3. Manufacture &amp; delivery
+              3. Manufacture &amp; Delivery
             </p>
             <p className="mt-3 text-sm text-slate-600">
               Once approved, we coordinate production and keep you updated.
@@ -235,17 +235,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== Processes & volumes ===== */}
+      {/* ===== Processes & Volumes ===== */}
       <section
         id="processes"
         className="scroll-mt-24 mx-auto max-w-7xl px-6 pb-10 pt-4"
       >
         <h2 className="text-2xl font-semibold text-slate-900">
-          Processes &amp; volumes
+          Processes &amp; Volumes
         </h2>
         <p className="mt-2 max-w-2xl text-slate-700">
-          Built for prototype-to-production — with mould-ready thermoplastics
-          available for scale-up.
+          Built for Prototype-to-Production usind mould-ready thermoplastics
+          for scale-up.
         </p>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -257,7 +257,7 @@ export default function HomePage() {
               1–100k+ units
             </p>
             <p className="mt-2 text-sm text-slate-600">
-              First articles → pilots → scale-up → recurring production.
+              First articles → Pilots → Scale-up → Recurring Production.
             </p>
           </div>
 
@@ -285,10 +285,10 @@ export default function HomePage() {
               ROUTES
             </p>
             <p className="mt-2 text-base font-semibold text-slate-900">
-              3D print · CNC · mould
+              3D Print · CNC Machine · Injection Mould
             </p>
             <p className="mt-2 text-sm text-slate-600">
-              We match your design to the best route for cost + performance.
+              We match your design to the best route for performance.
             </p>
           </div>
         </div>
@@ -301,7 +301,7 @@ export default function HomePage() {
       >
         <div className="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm">
           <h2 className="text-xl font-semibold text-slate-900">
-            Confidential by design
+            Confidential by Design
           </h2>
           <p className="mt-3 text-slate-700">
             Your designs and data are handled under strict confidentiality.{" "}
@@ -309,7 +309,7 @@ export default function HomePage() {
               NDAs are available on request
             </Link>{" "}
             and we only share the minimum technical detail required for
-            manufacture internally.
+            manufacture.
           </p>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <div className="flex items-start gap-3">
@@ -321,7 +321,7 @@ export default function HomePage() {
             <div className="flex items-start gap-3">
               <GreenTick />
               <p className="text-sm text-slate-600">
-                Vendor sharing minimised — only what’s required to manufacture.
+                Data sharing minimised — only what’s required to manufacture.
               </p>
             </div>
           </div>
@@ -339,9 +339,9 @@ export default function HomePage() {
               Get in Touch
             </h2>
             <p className="mt-3 max-w-xl text-slate-700">
-              Not sure if your design is ready, or exploring production options?
-              Send a short message and we&apos;ll respond by email, usually
-              within one working day.
+              Exploring production options?
+              Send a short message and we&apos;ll respond by email.
+    
             </p>
           </div>
 
@@ -354,7 +354,7 @@ export default function HomePage() {
             <form action="/api/contact" method="post" className="mt-4 space-y-4">
               <div className="space-y-1">
                 <label className="block text-sm text-slate-700" htmlFor="name">
-                  Your name
+                  Your Name
                 </label>
                 <input
                   id="name"
@@ -367,7 +367,7 @@ export default function HomePage() {
 
               <div className="space-y-1">
                 <label className="block text-sm text-slate-700" htmlFor="email">
-                  Email address
+                  Email Address
                 </label>
                 <input
                   id="email"
@@ -400,7 +400,7 @@ export default function HomePage() {
                 type="submit"
                 className="w-full rounded-full bg-[#1d72ff] px-6 py-4 text-sm font-semibold text-white shadow hover:brightness-110"
               >
-                Send enquiry
+                Send Enquiry
               </button>
             </form>
           </div>

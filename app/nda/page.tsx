@@ -79,11 +79,11 @@ export default function NdaPage() {
       <div className="mx-auto max-w-3xl px-6 py-12 space-y-10">
         <header className="space-y-3">
           <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-            NDA
+            Confidentiality - Sign our NDA
           </h1>
           <p className="text-slate-600">
-            Before we review your designs, we ask that you sign our mutual
-            non-disclosure agreement (NDA). This protects both your IP and ours.
+            If you would like some piece of mind before submitting your designs, you can sign our mutual
+            non-disclosure agreement (NDA). Though, this is not mandatory - the decision belongs to you.
           </p>
         </header>
 
@@ -119,7 +119,7 @@ export default function NdaPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1 text-slate-700">
-                Your name
+                Your Name
               </label>
               <input
                 className={inputClass}
@@ -132,7 +132,7 @@ export default function NdaPage() {
 
             <div>
               <label className="block text-sm font-medium mb-1 text-slate-700">
-                Email address
+                Email Address
               </label>
               <input
                 type="email"
@@ -146,7 +146,7 @@ export default function NdaPage() {
 
             <div>
               <label className="block text-sm font-medium mb-1 text-slate-700">
-                Company name
+                Company Name / Organisation
               </label>
               <input
                 className={inputClass}

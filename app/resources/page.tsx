@@ -115,7 +115,7 @@ export default function ResourcesPage() {
               Resources
             </h1>
             <p className="mt-2 max-w-3xl text-sm text-slate-600">
-              Helpful references for choosing processes and materials for microfluidic devices.
+              Helpful references for choosing processes and materials for microfluidic devices - more coming soon!
             </p>
           </div>
 
@@ -137,7 +137,7 @@ export default function ResourcesPage() {
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">
-                Material parameters
+                Microfludic Production Materials Compared
               </h2>
               <p className="mt-2 max-w-3xl text-sm text-slate-600">
                 A practical comparison of common microfluidics materials. COC/COP/PC/PMMA are
