@@ -153,7 +153,7 @@ export default function NdaPage() {
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 required
-                placeholder="Company / organisation"
+                placeholder="Company / Organisation"
               />
             </div>
 
