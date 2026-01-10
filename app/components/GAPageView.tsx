@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 declare global {
   interface Window {
@@ -11,21 +11,21 @@ declare global {
 
 export default function GAPageView() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const gaId = process.env.NEXT_PUBLIC_GA_ID;
     if (!gaId) return;
-
-    // gtag is created by the GA script in GoogleAnalytics.tsx
     if (typeof window.gtag !== "function") return;
 
-    const page_path = `${pathname}${window.location.search || ""}`;
+    const query = searchParams?.toString();
+    const page_path = query ? `${pathname}?${query}` : pathname;
 
     window.gtag("config", gaId, {
       page_path,
       anonymize_ip: true,
     });
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
   return null;
 }
