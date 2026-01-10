@@ -159,7 +159,8 @@ export default function HomePage() {
 
       {/* ===== How it works ===== */}
       <section id="how-it-works" className="scroll-mt-24 mx-auto max-w-7xl px-6 pb-10 pt-6">
-        <div className="flex items-start justify-between gap-6">
+        {/* CHANGED: mobile stacks + centers CTA */}
+        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
           <div>
             <h2 className="text-2xl font-semibold text-white">How it works</h2>
             <p className="mt-2 max-w-2xl text-slate-300">
@@ -167,12 +168,15 @@ export default function HomePage() {
             </p>
           </div>
 
-          <Link
-            href="/upload"
-            className="rounded-full border border-slate-500/70 px-5 py-2.5 text-sm font-semibold text-slate-100 hover:border-slate-300"
-          >
-            Start an RFQ
-          </Link>
+          {/* CHANGED: centered on mobile, left on desktop row */}
+          <div className="flex w-full justify-center sm:w-auto sm:justify-end">
+            <Link
+              href="/upload"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-slate-500/70 px-6 py-3 text-sm font-semibold text-slate-100 hover:border-slate-300"
+            >
+              Start an RFQ
+            </Link>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr]">
