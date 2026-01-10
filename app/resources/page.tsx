@@ -15,7 +15,6 @@ const rows: {
   hint?: string;
   values: Record<(typeof materials)[number]["key"], Cell | string>;
 }[] = [
-  // ✅ Biocompatibility moved to TOP row
   {
     label: "Biocompatibility",
     hint: "General suitability for biological assays (always validate for your assay, cleaning and surface treatment).",
@@ -99,9 +98,7 @@ function Badge({ value }: { value: Cell | string }) {
       : "bg-slate-100 text-slate-900 ring-1 ring-slate-200";
 
   return (
-    <span
-      className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${cls}`}
-    >
+    <span className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${cls}`}>
       {v}
     </span>
   );
@@ -109,23 +106,22 @@ function Badge({ value }: { value: Cell | string }) {
 
 export default function ResourcesPage() {
   return (
-    <main className="bg-[#020617]">
+    <main className="bg-white text-slate-900">
       {/* Top */}
       <section className="mx-auto max-w-screen-xl px-6 pb-8 pt-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-semibold text-white md:text-4xl">
+            <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">
               Resources
             </h1>
-            <p className="mt-2 max-w-3xl text-sm text-slate-300">
-              Helpful references for choosing processes and materials for
-              microfluidic devices.
+            <p className="mt-2 max-w-3xl text-sm text-slate-600">
+              Helpful references for choosing processes and materials for microfluidic devices.
             </p>
           </div>
 
           <Link
             href="/upload"
-            className="rounded-full bg-[#4aa3ff] px-5 py-2.5 text-sm font-semibold text-white shadow hover:bg-[#1d72ff]"
+            className="rounded-full bg-[#1d72ff] px-5 py-2.5 text-sm font-semibold text-white shadow hover:brightness-110"
           >
             Upload Design
           </Link>
@@ -137,22 +133,21 @@ export default function ResourcesPage() {
         id="material-parameters"
         className="mx-auto max-w-screen-xl px-6 pb-16 pt-6"
       >
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/45 p-6">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-semibold text-white md:text-4xl">
+              <h2 className="text-3xl font-semibold text-slate-900 md:text-4xl">
                 Material parameters
               </h2>
-              <p className="mt-2 max-w-3xl text-sm text-slate-300">
-                A practical comparison of common microfluidics materials.
-                COC/COP/PC/PMMA are typically chosen when designs need to be
-                mould-ready for scale-up, while 3D-printed resins are often best
-                for early prototypes.
+              <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                A practical comparison of common microfluidics materials. COC/COP/PC/PMMA are
+                typically chosen when designs need to be mould-ready for scale-up, while 3D-printed
+                resins are often best for early prototypes.
               </p>
             </div>
           </div>
 
-          {/* White table background + wide layout to minimise horizontal scroll */}
+          {/* Table container (keeps your table styling) */}
           <div className="mt-6 overflow-x-visible rounded-xl border border-slate-200 bg-white">
             <div className="p-4">
               <div className="w-full overflow-x-auto">
@@ -216,9 +211,8 @@ export default function ResourcesPage() {
               </div>
 
               <p className="mt-4 text-xs text-slate-500">
-                Notes: Ratings are indicative and depend on grade, additives,
-                channel geometry, stress, and exposure conditions. Always confirm
-                with datasheets and end-use testing.
+                Notes: Ratings are indicative and depend on grade, additives, channel geometry,
+                stress, and exposure conditions. Always confirm with datasheets and end-use testing.
               </p>
             </div>
           </div>

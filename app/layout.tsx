@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#020617] text-slate-100 antialiased">
+      <body className="min-h-screen bg-white pt-20 text-slate-900 antialiased">
         <GoogleAnalytics />
         <Header />
         {children}

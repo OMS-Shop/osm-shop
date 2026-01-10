@@ -10,7 +10,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "How it works", href: "/#how-it-works" },
   { label: "Processes & volumes", href: "/#processes" },
   { label: "Resources", href: "/resources" },
-  { label: "Confidentiality", href: "/#confidentiality" },
+  { label: "Confidentiality", href: "/nda" }, // ✅ goes to NDA page
   { label: "Contact", href: "/#contact" },
 ];
 
@@ -41,7 +41,7 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800/50 bg-gradient-to-r from-[#020617] via-[#06142a] to-[#020617]/90 backdrop-blur">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/50 bg-gradient-to-r from-[#020617] via-[#06142a] to-[#020617]/90 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-screen-2xl items-center justify-between gap-6 px-4 sm:px-6">
         {/* Brand */}
         <Link href="/" className="flex flex-shrink-0 items-center gap-4">
