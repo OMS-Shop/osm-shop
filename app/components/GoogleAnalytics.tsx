@@ -1,6 +1,7 @@
 "use client";
 
 import Script from "next/script";
+import { Suspense } from "react";
 import GAPageView from "./GAPageView";
 
 export default function GoogleAnalytics() {
@@ -18,14 +19,15 @@ export default function GoogleAnalytics() {
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
-          window.gtag = gtag;
           gtag('js', new Date());
-          gtag('config', '${gaId}', { anonymize_ip: true, send_page_view: false });
+          gtag('config', '${gaId}', { anonymize_ip: true });
         `}
       </Script>
 
-      {/* Track SPA route changes (and initial load) */}
-      <GAPageView />
+      {/* ✅ Suspense wrapper avoids not-found prerender error */}
+      <Suspense fallback={null}>
+        <GAPageView />
+      </Suspense>
     </>
   );
 }
